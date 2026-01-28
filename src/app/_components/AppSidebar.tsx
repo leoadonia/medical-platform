@@ -1,10 +1,12 @@
 "use client";
 
 import { Menu, MenuGroup, Sidebar } from "@/components/sidebar";
+import { useAuthorized } from "@/lib/stores/profile";
 import { Box, Button, Typography } from "@mui/material";
 import {
   Hospital,
   LayoutDashboard,
+  LogIn,
   LogOut,
   Settings,
   ShieldQuestion,
@@ -79,6 +81,33 @@ const Exit = () => {
   );
 };
 
+const Signin = () => {
+  const router = useRouter();
+
+  const handleSignin = () => {
+    router.push("/login");
+  };
+
+  return (
+    <Button
+      startIcon={<LogIn className="h-4 w-4" />}
+      onClick={handleSignin}
+      variant="contained"
+      className="flex w-full gap-2 rounded-lg p-2" // gap-2 is used for gap between icon and text.
+    >
+      <Typography variant="body2">登录</Typography>
+    </Button>
+  );
+};
+
 export const AppSidebar = () => {
-  return <Sidebar header={<Header />} center={<Menus />} footer={<Exit />} />;
+  const authorized = useAuthorized();
+
+  return (
+    <Sidebar
+      header={<Header />}
+      center={<Menus />}
+      footer={authorized ? <Exit /> : <Signin />}
+    />
+  );
 };

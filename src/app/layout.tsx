@@ -2,6 +2,7 @@ import { lightTheme } from "@/lib/theme/theme";
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import type { Metadata } from "next";
+import { Toaster } from "react-hot-toast";
 import { AppNavbar } from "./_components/AppNavbar";
 import { AppSidebar } from "./_components/AppSidebar";
 import "./globals.css";
@@ -30,6 +31,7 @@ export default function RootLayout({
                 </div>
               </div>
             </div>
+            <Toaster />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

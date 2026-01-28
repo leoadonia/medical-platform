@@ -1,0 +1,35 @@
+use serde::{Deserialize, Serialize};
+
+use crate::schema::patient::{Patient, TreatmentCourse, TreatmentCourseBody};
+
+pub mod clinical;
+pub mod patient;
+pub mod user;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PatientCreateRequest {
+    pub patient: Patient,
+    pub treatment: TreatmentCourseBody,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PaginationData<T> {
+    pub total: i64,
+    pub items: Vec<T>,
+    pub page: i32,
+    pub limit: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PatientSearchRequest {
+    pub name: Option<String>,
+    pub registration_number: Option<String>,
+    pub gender: Option<String>,
+    pub contact: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PatientInfo {
+    pub patient: Patient,
+    pub treatments: Vec<TreatmentCourse>,
+}
