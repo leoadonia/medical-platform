@@ -1,19 +1,13 @@
 use anyhow::Result;
 use rusqlite::{params_from_iter, Connection};
 
-use crate::{
-    schema::{
-        patient::{Patient, TreatmentCourse, TreatmentCourseBody},
-        PaginationData, PatientSearchRequest,
-    },
-    storage::clinical,
-};
+use crate::schema::{patient::Patient, PaginationData, PatientSearchRequest};
 
 pub fn create_table(conn: &Connection) -> Result<()> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS patient (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            registration_number TEXT NOT NULL,
+            registration_number TEXT NOT NULL UNIQUE DEFAULT '',
             name TEXT NOT NULL,
             gender TEXT NOT NULL,
             menarche INTEGER DEFAULT 0,
@@ -23,16 +17,6 @@ pub fn create_table(conn: &Connection) -> Result<()> {
             weight REAL NOT NULL,
             height REAL NOT NULL,
             contact TEXT NOT NULL,
-            created_at INTEGER NOT NULL DEFAULT 0,
-            updated_at INTEGER NOT NULL DEFAULT 0
-        )",
-        [],
-    )?;
-
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS treatment_course (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            patient_id INTEGER NOT NULL,
             created_at INTEGER NOT NULL DEFAULT 0,
             updated_at INTEGER NOT NULL DEFAULT 0
         )",
@@ -94,18 +78,6 @@ pub fn update(conn: &Connection, patient: &Patient) -> Result<()> {
     )?;
 
     Ok(())
-}
-
-pub fn insert_treatment_course(conn: &Connection, patient_id: i64) -> Result<i64> {
-    let now = chrono::Utc::now().timestamp();
-
-    conn.execute(
-        "INSERT INTO treatment_course (patient_id, created_at, updated_at) VALUES (?1, ?2, ?3)",
-        (patient_id, now, now),
-    )?;
-
-    let id = conn.last_insert_rowid();
-    Ok(id)
 }
 
 pub fn get_list(
@@ -190,51 +162,6 @@ pub fn select_by_id(conn: &Connection, id: i64) -> Result<Patient> {
             height: row.get(9)?,
             contact: row.get(10)?,
             created_at: row.get(11)?,
-        })
-    })?;
-    Ok(row)
-}
-
-pub fn select_treatment_course_list(
-    conn: &Connection,
-    patient_id: i64,
-) -> Result<Vec<TreatmentCourse>> {
-    let sql = "SELECT * FROM treatment_course WHERE patient_id = ? ORDER BY id DESC";
-    let mut stmt = conn.prepare(sql)?;
-    let rows = stmt.query_map(params_from_iter([patient_id]), |row| {
-        Ok(TreatmentCourse {
-            id: row.get(0)?,
-            patient_id: row.get(1)?,
-            created_at: row.get(2)?,
-            updated_at: row.get(3)?,
-        })
-    })?;
-    let items: Vec<TreatmentCourse> = rows.collect::<Result<_, _>>()?;
-    Ok(items)
-}
-
-pub fn select_treatment_course(conn: &Connection, id: i64) -> Result<TreatmentCourseBody> {
-    let clinical = clinical::select(conn, id)?;
-    let course = TreatmentCourseBody {
-        clinical,
-        image: None,
-    };
-
-    Ok(course)
-}
-
-pub fn select_latest_treatment_course(
-    conn: &Connection,
-    patient_id: i64,
-) -> Result<TreatmentCourse> {
-    let sql = "SELECT * FROM treatment_course WHERE patient_id = ? ORDER BY id DESC LIMIT 1";
-    let mut stmt = conn.prepare(sql)?;
-    let row = stmt.query_row(params_from_iter([patient_id]), |row| {
-        Ok(TreatmentCourse {
-            id: row.get(0)?,
-            patient_id: row.get(1)?,
-            created_at: row.get(2)?,
-            updated_at: row.get(3)?,
         })
     })?;
     Ok(row)

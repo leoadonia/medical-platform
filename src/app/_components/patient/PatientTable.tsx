@@ -65,7 +65,14 @@ export const PatientTable = (props: {
       headerName: "登记时间",
       render: (row: unknown) => {
         const patient = row as Patient;
-        return new Date(patient.created_at * 1000).toLocaleDateString();
+        return new Date(patient.created_at * 1000).toLocaleString("zh-CN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
       },
     },
   ];

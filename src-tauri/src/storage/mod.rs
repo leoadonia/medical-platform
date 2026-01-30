@@ -4,11 +4,9 @@ use anyhow::Result;
 use rusqlite::Connection;
 
 use crate::schema::{
-    patient::{
-        MedicalImage, Patient, QuestionAnswer, QuestionnaireWithPatient, TreatmentCourseBody,
-    },
+    patient::{Patient, QuestionAnswer, QuestionnaireWithPatient},
     user::User,
-    PaginationData, PatientInfo, PatientSearchRequest,
+    PaginationData, PatientSearchRequest,
 };
 
 mod asset;
@@ -106,103 +104,6 @@ impl Storage {
     pub fn get_questionnaire(&self, id: i64) -> Result<Vec<QuestionAnswer>> {
         let conn = self.conn.as_ref().unwrap();
         questionnaire::select_answers_by_id(conn, id)
-    }
-
-    pub fn create_treatment_course(
-        &self,
-        patient_id: i64,
-        course: &TreatmentCourseBody,
-    ) -> Result<()> {
-        let conn = self.conn.as_ref().unwrap();
-        let course_id = patient::insert_treatment_course(conn, patient_id)?;
-        let _ = clinical::insert(conn, patient_id, course_id, &course.clinical)?;
-
-        if let Some(image) = &course.image {
-            let data_dir = Path::new(self.data_dir.as_ref().unwrap())
-                .join("images")
-                .join(patient_id.to_string());
-
-            asset::save_medical_image(&data_dir, &image.x_ray, course_id, "x_ray".to_string())?;
-            asset::save_medical_image(
-                &data_dir,
-                &image.posture_backend,
-                course_id,
-                "posture_backend".to_string(),
-            )?;
-            asset::save_medical_image(
-                &data_dir,
-                &image.posture_frontend,
-                course_id,
-                "posture_frontend".to_string(),
-            )?;
-            asset::save_medical_image(
-                &data_dir,
-                &image.posture_left,
-                course_id,
-                "posture_left".to_string(),
-            )?;
-            asset::save_medical_image(
-                &data_dir,
-                &image.posture_right,
-                course_id,
-                "posture_right".to_string(),
-            )?;
-        }
-
-        Ok(())
-    }
-
-    pub fn select_treatment_course(&self, id: i64) -> Result<TreatmentCourseBody> {
-        let conn = self.conn.as_ref().unwrap();
-        let mut course = patient::select_treatment_course(conn, id)?;
-        let base_dir = Path::new(self.data_dir.as_ref().unwrap())
-            .join("images")
-            .join(course.clinical.parent_id.to_string());
-
-        course.image = Some(MedicalImage {
-            x_ray: if let Some(image) = asset::get_medical_image(&base_dir, id, "x_ray".to_string())
-            {
-                image
-            } else {
-                "".to_string()
-            },
-            posture_backend: if let Some(image) =
-                asset::get_medical_image(&base_dir, id, "posture_backend".to_string())
-            {
-                image
-            } else {
-                "".to_string()
-            },
-            posture_frontend: if let Some(image) =
-                asset::get_medical_image(&base_dir, id, "posture_frontend".to_string())
-            {
-                image
-            } else {
-                "".to_string()
-            },
-            posture_left: if let Some(image) =
-                asset::get_medical_image(&base_dir, id, "posture_left".to_string())
-            {
-                image
-            } else {
-                "".to_string()
-            },
-            posture_right: if let Some(image) =
-                asset::get_medical_image(&base_dir, id, "posture_right".to_string())
-            {
-                image
-            } else {
-                "".to_string()
-            },
-        });
-
-        Ok(course)
-    }
-
-    pub fn select_latest_treatment_course(&self, patient_id: i64) -> Result<TreatmentCourseBody> {
-        let conn = self.conn.as_ref().unwrap();
-        let course = patient::select_latest_treatment_course(conn, patient_id)?;
-        self.select_treatment_course(course.id)
     }
 
     pub fn select_questionnaire_list(

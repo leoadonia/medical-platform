@@ -16,7 +16,6 @@ import {
 } from "@/lib/types/patient";
 import { Box, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { BirthdayPicker } from "./_components/BirthdayPicker";
 import { GenderForm } from "./_components/GenderForm";
@@ -36,13 +35,7 @@ const EditPage = () => {
     return 0;
   };
 
-  useEffect(() => {
-    return () => {
-      clearPatient();
-    };
-  }, [clearPatient]);
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const error = validateUsingSchema(PatientSchema, patient);
     if (error) {
       toast.error(error);
@@ -51,9 +44,9 @@ const EditPage = () => {
 
     try {
       if (patient.id === 0) {
-        createPatient(patient);
+        await createPatient(patient);
       } else {
-        updatePatientToDB(patient);
+        await updatePatientToDB(patient);
       }
 
       toast.success("保存成功");
@@ -65,7 +58,10 @@ const EditPage = () => {
 
   return (
     <Box display={"flex"} flexDirection={"column"} gap={3}>
-      <BackHeader title={patient ? "编辑患者信息" : "新增患者"} />
+      <BackHeader
+        title={patient.id ? "编辑患者信息" : "新增患者"}
+        onClick={clearPatient}
+      />
 
       <Box className="flex flex-col gap-2 px-4">
         <TextItem id="registration_number" label="登记号">
