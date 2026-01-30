@@ -1,17 +1,18 @@
 "use client";
 
-import { Menu, MenuGroup, Sidebar } from "@/components/sidebar";
-import { useAuthorized } from "@/lib/stores/profile";
+import { Menu, Sidebar } from "@/components/sidebar";
+import { useAuthorized, useProfileStore } from "@/lib/stores/profile";
 import { Box, Button, Typography } from "@mui/material";
 import {
-  Hospital,
-  LayoutDashboard,
+  BedSingle,
+  ChartSpline,
   LogIn,
   LogOut,
   Settings,
   ShieldQuestion,
   User,
   Users,
+  Wallpaper,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -30,22 +31,30 @@ const Menus = () => {
   return (
     <Box display={"flex"} flexDirection={"column"} gap={2}>
       <Menu
-        title="主页面"
-        icon={<LayoutDashboard className="h-4 w-4" />}
-        href="/"
+        title="患者信息"
+        icon={<Users className="h-4 w-4" />}
+        href="/patients"
       />
-      <MenuGroup title="患者管理" icon={<Hospital className="h-4 w-4" />}>
-        <Menu
-          title="患者信息"
-          icon={<Users className="h-4 w-4" />}
-          href="/patients"
-        />
-        <Menu
-          title="问卷信息"
-          icon={<ShieldQuestion className="h-4 w-4" />}
-          href="/questionnaire"
-        />
-      </MenuGroup>
+      <Menu
+        title="临床信息"
+        icon={<BedSingle className="h-4 w-4" />}
+        href="/clinical"
+      />
+      <Menu
+        title="问卷信息"
+        icon={<ShieldQuestion className="h-4 w-4" />}
+        href="/questionnaire"
+      />
+      <Menu
+        title="影像学信息"
+        icon={<Wallpaper className="h-4 w-4" />}
+        href="/radiology"
+      />
+      <Menu
+        title="数据管理"
+        icon={<ChartSpline className="h-4 w-4" />}
+        href="/data"
+      />
       <Menu
         title="用户管理"
         icon={<User className="h-4 w-4" />}
@@ -54,7 +63,7 @@ const Menus = () => {
       <Menu
         title="系统设置"
         icon={<Settings className="h-4 w-4" />}
-        href="/runtime"
+        href="/settings"
       />
     </Box>
   );
@@ -64,7 +73,7 @@ const Exit = () => {
   const router = useRouter();
 
   const handleExit = async () => {
-    // await signOut();
+    useProfileStore.getState().clearProfile();
     router.push("/login");
   };
 
@@ -74,7 +83,7 @@ const Exit = () => {
       onClick={handleExit}
       color="error"
       variant="outlined"
-      className="flex w-full gap-2 rounded-lg p-2" // gap-2 is used for gap between icon and text.
+      className="flex w-full gap-2 rounded-full p-2" // gap-2 is used for gap between icon and text.
     >
       <Typography variant="body2">退出登录</Typography>
     </Button>
@@ -93,7 +102,7 @@ const Signin = () => {
       startIcon={<LogIn className="h-4 w-4" />}
       onClick={handleSignin}
       variant="contained"
-      className="flex w-full gap-2 rounded-lg p-2" // gap-2 is used for gap between icon and text.
+      className="flex w-full gap-2 rounded-full p-2" // gap-2 is used for gap between icon and text.
     >
       <Typography variant="body2">登录</Typography>
     </Button>

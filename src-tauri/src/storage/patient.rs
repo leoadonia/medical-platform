@@ -127,11 +127,6 @@ pub fn get_list(
         inputs.push(registration_number);
     }
 
-    if let Some(gender) = &request.gender {
-        conditions.push(format!("gender = ?{}", inputs.len() + 1));
-        inputs.push(gender);
-    }
-
     if let Some(contact) = &request.contact {
         conditions.push(format!("contact = ?{}", inputs.len() + 1));
         inputs.push(contact);

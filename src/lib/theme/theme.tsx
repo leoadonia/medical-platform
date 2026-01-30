@@ -369,6 +369,11 @@ const createBaseTheme = (palette: PaletteOptions) =>
           },
         },
       },
+      MuiSelect: {
+        defaultProps: {
+          size: "small",
+        },
+      },
     },
   });
 

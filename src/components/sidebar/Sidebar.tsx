@@ -1,6 +1,5 @@
 "use client";
 
-import { Divider } from "@mui/material";
 import { ReactNode } from "react";
 import { useSidebarStore } from "./store";
 
@@ -28,9 +27,10 @@ export const Sidebar = (props: {
   }
 
   return (
-    <div className="flex min-h-screen w-50 flex-col overflow-hidden rounded-br-2xl bg-white p-2 shadow-md lg:w-75">
-      {props.header && <Header>{props.header}</Header>}
-      <Divider className="mb-4" />
+    <div className="flex min-h-screen w-50 flex-col overflow-hidden rounded-br-2xl bg-white p-2 shadow-md lg:w-60">
+      <div className="min-h-20">
+        {props.header && <Header>{props.header}</Header>}
+      </div>
       {props.center && <Center>{props.center}</Center>}
       {props.footer && <Footer>{props.footer}</Footer>}
     </div>

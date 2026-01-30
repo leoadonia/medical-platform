@@ -1,16 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-use crate::schema::patient::{Patient, TreatmentCourse, TreatmentCourseBody};
+use crate::schema::patient::{Patient, TreatmentCourse};
 
 pub mod clinical;
 pub mod patient;
 pub mod user;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PatientCreateRequest {
-    pub patient: Patient,
-    pub treatment: TreatmentCourseBody,
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PaginationData<T> {
@@ -24,7 +18,6 @@ pub struct PaginationData<T> {
 pub struct PatientSearchRequest {
     pub name: Option<String>,
     pub registration_number: Option<String>,
-    pub gender: Option<String>,
     pub contact: Option<String>,
 }
 

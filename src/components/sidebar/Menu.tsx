@@ -18,7 +18,7 @@ export const MenuGroup = (props: MenuGroupProps) => {
     <>
       <CardActionArea
         onClick={() => setCollapsed(!collapsed)}
-        className="rounded-lg p-2 hover:text-success-500"
+        className="hover:text-success-500 rounded-lg p-2"
       >
         <Box
           display={"flex"}
@@ -31,9 +31,9 @@ export const MenuGroup = (props: MenuGroupProps) => {
             <Typography variant={"subtitle2"}>{props.title}</Typography>
           </Box>
           {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="h-4 w-4" />
           ) : (
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown className="h-4 w-4" />
           )}
         </Box>
       </CardActionArea>
@@ -63,14 +63,16 @@ export const Menu = (props: MenuData) => {
   return (
     <CardActionArea
       data-active={path === href || path.startsWith(`${href}/`)}
-      className="p-2 rounded-lg data-[active=true]:bg-primary-200 hover:bg-primary-50"
+      className="data-[active=true]:bg-primary-100 hover:bg-primary-50 rounded-lg p-2"
       onClick={() => {
         router.push(href);
       }}
     >
-      <Box display={"flex"} alignItems={"center"} gap={1} pl={2}>
+      <Box display={"flex"} alignItems={"center"} gap={2} pl={2}>
         {icon}
-        <Typography variant={"subtitle2"}>{title}</Typography>
+        <Typography variant={"subtitle2"} className="font-semibold">
+          {title}
+        </Typography>
       </Box>
     </CardActionArea>
   );

@@ -10,6 +10,7 @@ export interface ProfileState {
   profile?: Profile;
 
   setProfile: (profile: Profile) => void;
+  clearProfile: () => void;
 }
 
 export const useProfileStore = create<ProfileState>()(
@@ -18,6 +19,8 @@ export const useProfileStore = create<ProfileState>()(
       profile: undefined,
 
       setProfile: (profile) => set({ profile }),
+
+      clearProfile: () => set({ profile: undefined }),
     }),
     {
       name: "sidebar-db",

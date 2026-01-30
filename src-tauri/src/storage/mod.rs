@@ -8,7 +8,7 @@ use crate::schema::{
         MedicalImage, Patient, QuestionAnswer, QuestionnaireWithPatient, TreatmentCourseBody,
     },
     user::User,
-    PaginationData, PatientCreateRequest, PatientInfo, PatientSearchRequest,
+    PaginationData, PatientInfo, PatientSearchRequest,
 };
 
 mod asset;
@@ -73,12 +73,12 @@ impl Storage {
         user::delete(conn, id)
     }
 
-    pub fn create_patient(&self, request: &PatientCreateRequest) -> Result<()> {
+    pub fn create_patient(&self, request: &Patient) -> Result<i64> {
         let conn = self.conn.as_ref().unwrap();
-        let id = patient::insert(conn, &request.patient)?;
-        self.create_treatment_course(id, &request.treatment)?;
+        let id = patient::insert(conn, request)?;
+        // self.create_treatment_course(id, &request.treatment)?;
 
-        Ok(())
+        Ok(id)
     }
 
     pub fn update_patient(&self, patient: &Patient) -> Result<()> {
@@ -95,16 +95,6 @@ impl Storage {
     ) -> Result<PaginationData<Patient>> {
         let conn = self.conn.as_ref().unwrap();
         patient::get_list(conn, request, page, limit)
-    }
-
-    pub fn get_patient_info(&self, id: i64) -> Result<PatientInfo> {
-        let conn = self.conn.as_ref().unwrap();
-        let patient = patient::select_by_id(conn, id)?;
-        let treatments = patient::select_treatment_course_list(conn, id)?;
-        Ok(PatientInfo {
-            patient,
-            treatments,
-        })
     }
 
     pub fn add_questionnaire(&mut self, patient_id: i64, answers: &[QuestionAnswer]) -> Result<()> {

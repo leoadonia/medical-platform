@@ -45,6 +45,9 @@ pub fn run() {
             commands::user::get_user_session,
             commands::user::get_users,
             commands::user::modify_password,
+            commands::patient::get_patients,
+            commands::patient::create_patient,
+            commands::patient::update_patient,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

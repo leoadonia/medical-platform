@@ -7,11 +7,11 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-export type TextValidationError = "valueMissing" | "typeMismatch" | "default";
+export type TextValidationError = "valueMissing" | "typeMismatch";
 
 export interface TextValidator {
-  fn?: (value: string) => TextValidationError | null;
-  rules: Partial<Record<TextValidationError, string>>;
+  fn?: (value: string) => string | null;
+  rules?: Partial<Record<TextValidationError, string>>;
 }
 
 export type TextFieldProps = MuiTextProps & {
@@ -32,7 +32,7 @@ export const TextField = (props: TextFieldProps) => {
     helperText,
     label,
     slotProps,
-    ...rest
+    ...otherProps
   } = props;
 
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -40,38 +40,21 @@ export const TextField = (props: TextFieldProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    let errorType = null;
-    if (validator) {
-      errorType = validator.fn?.(value);
-    }
-
-    if (!errorType) {
-      if (rest.required && !value) {
-        errorType = "valueMissing" as TextValidationError;
+    let error = validator?.fn?.(value) || null;
+    if (!error) {
+      // Try do some default validation.
+      if (otherProps.required && !value) {
+        error = validator?.rules?.["valueMissing"] || "请输入必填项";
       }
     }
 
-    if (errorType) {
-      // The previous value should be clear if there is any error.
-      onValueChange?.("");
-
-      const err = validator?.rules[errorType];
-      if (err) {
-        setErrorMsg(err);
-        return;
-      }
-
-      if (validator?.rules["default"]) {
-        setErrorMsg(validator?.rules["default"]);
-        return;
-      }
-
-      setErrorMsg(errorType);
-      return;
+    if (error) {
+      setErrorMsg(error);
+    } else {
+      // Clear the error if the value is valid.
+      setErrorMsg("");
     }
 
-    // Clear the error if the value is valid.
-    setErrorMsg("");
     onValueChange?.(value);
   };
 
@@ -80,7 +63,7 @@ export const TextField = (props: TextFieldProps) => {
       return label;
     }
 
-    if (rest.required) {
+    if (otherProps.required) {
       return "Required";
     }
 
@@ -124,8 +107,8 @@ export const TextField = (props: TextFieldProps) => {
 
   return (
     <MuiTextField
-      {...rest}
-      name={rest.id} // Using for the field name in FormData.
+      {...otherProps}
+      name={otherProps.id} // Using for the field name in FormData.
       onChange={handleChange}
       error={!!errorMsg}
       helperText={errorMsg || helperText}

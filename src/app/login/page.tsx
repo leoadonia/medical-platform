@@ -53,7 +53,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center pb-20">
+    <div className="flex h-full items-center justify-center pb-20">
       <Card className="border-primary-100 w-md rounded-2xl border bg-white/80 p-8 shadow-lg">
         <Box component={"form"} noValidate onSubmit={handleLogin}>
           <CardContent className="flex flex-col gap-4 text-center">

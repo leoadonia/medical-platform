@@ -27,11 +27,17 @@ export default function RootLayout({
                 <AppSidebar />
                 <div className="flex-1 flex-col">
                   <AppNavbar />
-                  <div className="h-full overflow-y-auto">{children}</div>
+                  <div className="h-[calc(100vh-52px)] overflow-y-auto p-4">
+                    {children}
+                  </div>
                 </div>
               </div>
             </div>
-            <Toaster />
+            <Toaster
+              toastOptions={{
+                position: "top-right",
+              }}
+            />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
