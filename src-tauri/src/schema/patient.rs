@@ -41,15 +41,6 @@ pub struct Patient {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct MedicalImage {
-    pub x_ray: String,
-    pub posture_frontend: String,
-    pub posture_backend: String,
-    pub posture_left: String,
-    pub posture_right: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 pub struct QuestionAnswer {
     #[serde(rename = "index")]
     pub question_idx: i64,

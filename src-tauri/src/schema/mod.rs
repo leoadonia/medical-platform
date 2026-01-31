@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod clinical;
 pub mod patient;
+pub mod radiology;
 pub mod user;
 
 #[derive(Debug, Serialize, Deserialize)]

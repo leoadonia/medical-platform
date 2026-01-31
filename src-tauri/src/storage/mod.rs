@@ -6,6 +6,7 @@ use rusqlite::Connection;
 use crate::schema::{
     clinical::Clinical,
     patient::{Patient, QuestionAnswer, QuestionnaireWithPatient},
+    radiology::Radiology,
     user::User,
     PaginationData, PatientSearchRequest,
 };
@@ -14,6 +15,7 @@ mod asset;
 mod clinical;
 mod patient;
 mod questionnaire;
+mod radiology;
 mod user;
 
 pub struct Storage {
@@ -44,6 +46,7 @@ impl Storage {
         patient::create_table(conn)?;
         clinical::create_table(conn)?;
         questionnaire::create_table(conn)?;
+        radiology::create_table(conn)?;
         Ok(())
     }
 
@@ -130,5 +133,11 @@ impl Storage {
     pub fn insert_clinical(&self, clinical: &Clinical) -> Result<i64> {
         let conn = self.conn.as_ref().unwrap();
         clinical::insert(conn, clinical)
+    }
+
+    pub fn insert_radiology(&self, radiology: &Radiology) -> Result<i64> {
+        let conn = self.conn.as_ref().unwrap();
+        let data_dir = self.data_dir.as_ref().unwrap();
+        radiology::insert(conn, radiology, data_dir)
     }
 }

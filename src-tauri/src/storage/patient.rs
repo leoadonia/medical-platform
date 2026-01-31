@@ -192,26 +192,3 @@ pub fn get_list(
         limit,
     })
 }
-
-pub fn select_by_id(conn: &Connection, id: i64) -> Result<Patient> {
-    let sql = "SELECT * FROM patient WHERE id = ?";
-    let mut stmt = conn.prepare(sql)?;
-    let row = stmt.query_row(params_from_iter([id]), |row| {
-        Ok(Patient {
-            id: row.get(0)?,
-            registration_number: row.get(1)?,
-            name: row.get(2)?,
-            gender: row.get(3)?,
-            menarche: row.get(4)?,
-            birthday: row.get(5)?,
-            school: row.get(6)?,
-            grade: row.get(7)?,
-            weight: row.get(8)?,
-            height: row.get(9)?,
-            contact: row.get(10)?,
-            state: row.get(11)?,
-            created_at: row.get(12)?,
-        })
-    })?;
-    Ok(row)
-}

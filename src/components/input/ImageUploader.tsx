@@ -1,0 +1,96 @@
+"use client";
+
+import { ImageAsset, readImageAsset } from "@/lib/apis/assert";
+import { singleImageSelector } from "@/lib/apis/selector";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CircularProgress,
+  FormLabel,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
+import { ImageUp } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState, useTransition } from "react";
+
+export const ImageUploader = (props: {
+  title: string;
+  example: string;
+  src: string;
+  onImageSelected: (src: string) => void;
+}) => {
+  const { title, example, src, onImageSelected } = props;
+  const [image, setImage] = useState<ImageAsset | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    startTransition(async () => {
+      const image = await readImageAsset(src);
+      setImage(image);
+    });
+  }, [src]);
+
+  const openImageSelector = async () => {
+    const selected = await singleImageSelector(`请选择 ${title} 图片.`);
+    console.log("selected image: ", selected);
+    setImage(selected);
+    if (selected) {
+      onImageSelected(selected.path);
+    }
+  };
+
+  if (isPending) {
+    return <CircularProgress color="info" />;
+  }
+
+  return (
+    <Card className="shadow-info-50 border-info-50 border bg-white/30 shadow-lg">
+      <div className="p-2 px-8">
+        <Grid container spacing={2} alignItems={"center"}>
+          <Grid size={2}>
+            <FormLabel>
+              <Typography variant="subtitle1">{title}:</Typography>
+            </FormLabel>
+          </Grid>
+          <Grid>
+            <Box display={"flex"} gap={4}>
+              <Image
+                src={example}
+                height={200}
+                width={180}
+                alt={`${title}示例`}
+              />
+              <CardActionArea onClick={openImageSelector}>
+                {image ? (
+                  <Image
+                    src={image.asset}
+                    height={200}
+                    width={180}
+                    alt={title}
+                  />
+                ) : (
+                  <Paper
+                    sx={{
+                      width: 180,
+                      height: 200,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 2,
+                    }}
+                    elevation={2}
+                  >
+                    <ImageUp color="gray" className="h-12 w-12" />
+                  </Paper>
+                )}
+              </CardActionArea>
+            </Box>
+          </Grid>
+        </Grid>
+      </div>
+    </Card>
+  );
+};
