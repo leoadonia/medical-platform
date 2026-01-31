@@ -1,17 +1,22 @@
 "use client";
 
+import { displayPatientState } from "@/app/_lib/state";
 import { GradientCircularProgress } from "@/components/animation/Loading";
 import { ColumnDef, Table } from "@/components/data";
 import { getPatients } from "@/lib/apis/patient";
-import { formatAgeFromBirthday } from "@/lib/date";
+import { formatAgeFromBirthday, formatDate } from "@/lib/date";
 import { PaginationData } from "@/lib/types/pagination";
 import { Patient, SearchParams } from "@/lib/types/patient";
+import { Button } from "@mui/material";
+import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 
 export const PatientTable = (props: {
   operator?: (patient: Patient) => React.ReactNode;
 }) => {
+  const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const [patients, setPatients] = useState<PaginationData<Patient>>({
     total: 0,
@@ -57,22 +62,21 @@ export const PatientTable = (props: {
       headerName: "性别",
     },
     {
+      field: "state",
+      headerName: "状态",
+      render: (row: Patient) => {
+        return displayPatientState(row.state);
+      },
+    },
+    {
       field: "contact",
       headerName: "联系方式",
     },
     {
       field: "created_at",
       headerName: "登记时间",
-      render: (row: unknown) => {
-        const patient = row as Patient;
-        return new Date(patient.created_at * 1000).toLocaleString("zh-CN", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        });
+      render: (row: Patient) => {
+        return formatDate(row.created_at);
       },
     },
   ];
@@ -88,7 +92,20 @@ export const PatientTable = (props: {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar
+        onSearch={handleSearch}
+        actions={
+          <Button
+            startIcon={<Plus className="h-4 w-4" />}
+            variant="outlined"
+            color="info"
+            className="gap-1 px-4"
+            onClick={() => router.push("/patients/edit")}
+          >
+            新增
+          </Button>
+        }
+      />
 
       {loading ? (
         <GradientCircularProgress />

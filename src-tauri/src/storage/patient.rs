@@ -1,7 +1,51 @@
 use anyhow::Result;
-use rusqlite::{params_from_iter, Connection};
+use rusqlite::{
+    params_from_iter,
+    types::{FromSql, FromSqlError, ValueRef},
+    Connection, ToSql,
+};
 
-use crate::schema::{patient::Patient, PaginationData, PatientSearchRequest};
+use crate::schema::{
+    patient::{Patient, PatientState},
+    PaginationData, PatientSearchRequest,
+};
+
+impl ToSql for PatientState {
+    fn to_sql(&self) -> rusqlite::Result<rusqlite::types::ToSqlOutput<'_>> {
+        let n = match self {
+            Self::Init => 0,
+            Self::StableMild => 1,
+            Self::StableModerate => 2,
+            Self::StableSerious => 3,
+            Self::ProgressiveMild => 4,
+            Self::ProgressiveModerate => 5,
+            Self::ProgressiveSerious => 6,
+            Self::MatureMild => 7,
+            Self::MatureModerate => 8,
+            Self::MatureSerious => 9,
+        };
+        Ok(rusqlite::types::ToSqlOutput::from(n))
+    }
+}
+
+impl FromSql for PatientState {
+    fn column_result(value: ValueRef<'_>) -> Result<PatientState, FromSqlError> {
+        let n = value.as_i64()?;
+        match n {
+            0 => Ok(Self::Init),
+            1 => Ok(Self::StableMild),
+            2 => Ok(Self::StableModerate),
+            3 => Ok(Self::StableSerious),
+            4 => Ok(Self::ProgressiveMild),
+            5 => Ok(Self::ProgressiveModerate),
+            6 => Ok(Self::ProgressiveSerious),
+            7 => Ok(Self::MatureMild),
+            8 => Ok(Self::MatureModerate),
+            9 => Ok(Self::MatureSerious),
+            _ => Err(FromSqlError::InvalidType),
+        }
+    }
+}
 
 pub fn create_table(conn: &Connection) -> Result<()> {
     conn.execute(
@@ -17,6 +61,7 @@ pub fn create_table(conn: &Connection) -> Result<()> {
             weight REAL NOT NULL,
             height REAL NOT NULL,
             contact TEXT NOT NULL,
+            state INTEGER NOT NULL DEFAULT 0,
             created_at INTEGER NOT NULL DEFAULT 0,
             updated_at INTEGER NOT NULL DEFAULT 0
         )",
@@ -32,8 +77,8 @@ pub fn insert(conn: &Connection, patient: &Patient) -> Result<i64> {
     conn.execute(
         "INSERT INTO patient (
             registration_number, name, gender, menarche, birthday, school, grade, 
-            weight, height, contact, created_at, updated_at
-        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
+            weight, height, contact, state, created_at, updated_at
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)",
         (
             &patient.registration_number,
             &patient.name,
@@ -45,6 +90,7 @@ pub fn insert(conn: &Connection, patient: &Patient) -> Result<i64> {
             patient.weight,
             patient.height,
             &patient.contact,
+            &patient.state,
             now,
             now,
         ),
@@ -60,8 +106,8 @@ pub fn update(conn: &Connection, patient: &Patient) -> Result<()> {
     conn.execute(
         "UPDATE patient SET 
             name = ?1, gender = ?2, menarche = ?3, birthday = ?4, school = ?5, grade = ?6, 
-            weight = ?7, height = ?8, contact = ?9, updated_at = ?10
-        WHERE id = ?11",
+            weight = ?7, height = ?8, contact = ?9, state = ?10, updated_at = ?11
+        WHERE id = ?12",
         (
             &patient.name,
             &patient.gender,
@@ -72,6 +118,7 @@ pub fn update(conn: &Connection, patient: &Patient) -> Result<()> {
             patient.weight,
             patient.height,
             &patient.contact,
+            &patient.state,
             now,
             patient.id,
         ),
@@ -132,7 +179,8 @@ pub fn get_list(
             weight: row.get(8)?,
             height: row.get(9)?,
             contact: row.get(10)?,
-            created_at: row.get(11)?,
+            state: row.get(11)?,
+            created_at: row.get(12)?,
         })
     })?;
 
@@ -161,7 +209,8 @@ pub fn select_by_id(conn: &Connection, id: i64) -> Result<Patient> {
             weight: row.get(8)?,
             height: row.get(9)?,
             contact: row.get(10)?,
-            created_at: row.get(11)?,
+            state: row.get(11)?,
+            created_at: row.get(12)?,
         })
     })?;
     Ok(row)

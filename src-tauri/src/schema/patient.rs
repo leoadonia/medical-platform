@@ -1,6 +1,24 @@
 use serde::{Deserialize, Serialize};
 
-use crate::schema::clinical;
+#[derive(Debug, Serialize, Deserialize)]
+pub enum PatientState {
+    Init,
+
+    // 平稳期
+    StableMild,     // 轻度
+    StableModerate, // 中度
+    StableSerious,  // 重度
+
+    // 进展期
+    ProgressiveMild,
+    ProgressiveModerate,
+    ProgressiveSerious,
+
+    // 成熟期
+    MatureMild,
+    MatureModerate,
+    MatureSerious,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Patient {
@@ -18,6 +36,8 @@ pub struct Patient {
 
     #[serde(default)]
     pub created_at: i64,
+
+    pub state: PatientState,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -34,21 +54,6 @@ pub struct QuestionAnswer {
     #[serde(rename = "index")]
     pub question_idx: i64,
     pub score: i64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TreatmentCourse {
-    pub id: i64,
-    pub patient_id: i64,
-    pub created_at: i64,
-    pub updated_at: i64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TreatmentCourseBody {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub image: Option<MedicalImage>,
-    pub clinical: clinical::Clinical,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

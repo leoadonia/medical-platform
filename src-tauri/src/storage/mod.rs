@@ -4,6 +4,7 @@ use anyhow::Result;
 use rusqlite::Connection;
 
 use crate::schema::{
+    clinical::Clinical,
     patient::{Patient, QuestionAnswer, QuestionnaireWithPatient},
     user::User,
     PaginationData, PatientSearchRequest,
@@ -114,5 +115,20 @@ impl Storage {
     ) -> Result<PaginationData<QuestionnaireWithPatient>> {
         let conn = self.conn.as_ref().unwrap();
         questionnaire::select_questionnaire_list(conn, request, page, limit)
+    }
+
+    pub fn select_clinical_list(
+        &self,
+        patient_id: i64,
+        page: i32,
+        limit: i32,
+    ) -> Result<PaginationData<Clinical>> {
+        let conn = self.conn.as_ref().unwrap();
+        clinical::get_list(conn, patient_id, page, limit)
+    }
+
+    pub fn insert_clinical(&self, clinical: &Clinical) -> Result<i64> {
+        let conn = self.conn.as_ref().unwrap();
+        clinical::insert(conn, clinical)
     }
 }

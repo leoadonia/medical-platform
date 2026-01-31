@@ -16,5 +16,9 @@ export const validateUsingSchema = <T>(
   }
 
   const issue = result.error.issues[0];
+  if (issue.path.length === 0) {
+    return issue.message;
+  }
+
   return `${issue.path.join(",")}: ${issue.message}`;
 };

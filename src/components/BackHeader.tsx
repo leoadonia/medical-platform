@@ -4,17 +4,10 @@ import { Button, Tooltip, Typography } from "@mui/material";
 import { Undo2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export const BackHeader = ({
-  title,
-  onClick,
-}: {
-  title: string;
-  onClick?: () => void;
-}) => {
+export const BackHeader = ({ title }: { title: string }) => {
   const router = useRouter();
 
   const handleBack = () => {
-    onClick?.();
     router.back();
   };
 

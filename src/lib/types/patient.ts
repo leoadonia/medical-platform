@@ -1,6 +1,19 @@
 import { NonEmptyStringSchema } from "@/lib/schema";
 import { z } from "zod";
 
+export const PatientStateOptions = [
+  "Init",
+  "StableMild",
+  "StableModerate",
+  "StableSerious",
+  "ProgressiveMild",
+  "ProgressiveModerate",
+  "ProgressiveSerious",
+  "MatureMild",
+  "MatureModerate",
+  "MatureSerious",
+];
+
 export const GenderOptions = ["男生", "女生"];
 export const GenderSchema = z.enum(GenderOptions);
 
@@ -38,6 +51,7 @@ export const PhoneNumberSchema = z.string().length(11, "请填写正确的手机
 
 export const PatientSchema = z.object({
   id: z.number(),
+  state: z.enum(PatientStateOptions),
   registration_number: z.string(),
   name: NonEmptyStringSchema,
   contact: NonEmptyStringSchema,
@@ -53,8 +67,9 @@ export const PatientSchema = z.object({
 
 export type Patient = z.infer<typeof PatientSchema>;
 
-export const DefaultPatient = {
+export const DefaultPatient: Patient = {
   id: 0,
+  state: "Init",
   registration_number: "",
   name: "",
   contact: "",

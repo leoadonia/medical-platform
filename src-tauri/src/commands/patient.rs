@@ -9,6 +9,8 @@ use crate::{
 
 #[tauri::command]
 pub async fn create_patient(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<i64> {
+    println!("create_patient: {:?}", data);
+
     let storage = storage.lock().unwrap();
     let req: Patient = serde_json::from_str(data)?;
     let id = storage.create_patient(&req)?;

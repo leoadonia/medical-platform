@@ -1,5 +1,6 @@
 "use client";
 
+import { FormGrid } from "@/app/_components/FormGrid";
 import { BackHeader } from "@/components/BackHeader";
 import { TextField } from "@/components/input/TextField";
 import {
@@ -20,11 +21,17 @@ import toast from "react-hot-toast";
 import { BirthdayPicker } from "./_components/BirthdayPicker";
 import { GenderForm } from "./_components/GenderForm";
 import { GradeSelect } from "./_components/GradeSelect";
-import { TextItem } from "./_components/TextItem";
+import { useEffect } from "react";
 
 const EditPage = () => {
-  const { patient, clearPatient, updatePatient } = usePatientStore();
+  const { patient, updatePatient } = usePatientStore();
   const router = useRouter();
+
+  useEffect(() => {
+    return () => {
+      usePatientStore.getState().clearPatient();
+    };
+  }, []);
 
   const bmi = () => {
     if (patient.height && patient.weight) {
@@ -58,13 +65,10 @@ const EditPage = () => {
 
   return (
     <Box display={"flex"} flexDirection={"column"} gap={3}>
-      <BackHeader
-        title={patient.id ? "编辑患者信息" : "新增患者"}
-        onClick={clearPatient}
-      />
+      <BackHeader title={patient.id ? "编辑患者信息" : "新增患者"} />
 
       <Box className="flex flex-col gap-2 px-4">
-        <TextItem id="registration_number" label="登记号">
+        <FormGrid id="registration_number" label="登记号">
           <TextField
             id="registration_number"
             value={patient?.registration_number}
@@ -73,8 +77,8 @@ const EditPage = () => {
             className="min-w-xs"
             onValueChange={(v) => updatePatient({ registration_number: v })}
           />
-        </TextItem>
-        <TextItem id="name" label="姓名">
+        </FormGrid>
+        <FormGrid id="name" label="姓名">
           <TextField
             id="name"
             value={patient?.name}
@@ -83,8 +87,8 @@ const EditPage = () => {
             className="min-w-xs"
             onValueChange={(v) => updatePatient({ name: v })}
           />
-        </TextItem>
-        <TextItem id="contact" label="联系电话(家长)">
+        </FormGrid>
+        <FormGrid id="contact" label="联系电话(家长)">
           <TextField
             id="contact"
             value={patient?.contact}
@@ -96,8 +100,8 @@ const EditPage = () => {
               fn: (v) => validateUsingSchema(PhoneNumberSchema, v),
             }}
           />
-        </TextItem>
-        <TextItem id="height" label="身高">
+        </FormGrid>
+        <FormGrid id="height" label="身高">
           <TextField
             id="height"
             value={patient?.height}
@@ -111,8 +115,8 @@ const EditPage = () => {
               fn: (v) => validateUsingSchema(HeightSchema, Number(v)),
             }}
           />
-        </TextItem>
-        <TextItem id="weight" label="体重">
+        </FormGrid>
+        <FormGrid id="weight" label="体重">
           <TextField
             id="weight"
             value={patient?.weight}
@@ -126,8 +130,8 @@ const EditPage = () => {
               fn: (v) => validateUsingSchema(WeightSchema, Number(v)),
             }}
           />
-        </TextItem>
-        <TextItem id="bmi" label="BMI">
+        </FormGrid>
+        <FormGrid id="bmi" label="BMI">
           <TextField
             id="bmi"
             className="min-w-xs"
@@ -136,18 +140,18 @@ const EditPage = () => {
             variant="standard"
             endIcon={"kg/m²"}
           />
-        </TextItem>
+        </FormGrid>
         <GenderForm />
         <BirthdayPicker />
         <GradeSelect />
-        <TextItem id="school" label="学校">
+        <FormGrid id="school" label="学校">
           <TextField
             id="school"
             value={patient?.school}
             fullWidth
             onValueChange={(v) => updatePatient({ school: v })}
           />
-        </TextItem>
+        </FormGrid>
         <Button
           className="from-primary-200 to-info-400 mx-auto mt-8 flex min-w-3xs bg-linear-to-r text-white"
           onClick={handleSubmit}

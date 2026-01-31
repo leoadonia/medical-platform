@@ -1,7 +1,7 @@
 use anyhow::Result;
 use rusqlite::Connection;
 
-use crate::schema::clinical::Clinical;
+use crate::schema::{clinical::Clinical, PaginationData};
 
 pub fn create_table(conn: &Connection) -> Result<()> {
     conn.execute(
@@ -9,7 +9,6 @@ pub fn create_table(conn: &Connection) -> Result<()> {
         CREATE TABLE IF NOT EXISTS clinical (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             patient_id INTEGER NOT NULL,
-            treatment_course_id INTEGER NOT NULL,
             brace JSON,
             treatment TEXT NOT NULL,
             exercise JSON,
@@ -18,9 +17,11 @@ pub fn create_table(conn: &Connection) -> Result<()> {
             tenderness TEXT,
             percussion TEXT,
             posture JSON,
-            cobb INTEGER NOT NULL,
+            cobb JSON NOT NULL,
             flexion_atr JSON,
             pain_rate INTEGER NOT NULL DEFAULT 0,
+            extremity JSON,
+            risser INTEGER NOT NULL DEFAULT 0,
             created_at INTEGER NOT NULL DEFAULT 0,
             updated_at INTEGER NOT NULL DEFAULT 0
         )",
@@ -29,12 +30,7 @@ pub fn create_table(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
-pub fn insert(
-    conn: &Connection,
-    patient_id: i64,
-    treatment_course_id: i64,
-    clinical: &Clinical,
-) -> Result<i64> {
+pub fn insert(conn: &Connection, clinical: &Clinical) -> Result<i64> {
     let now = chrono::Utc::now().timestamp();
 
     let exercise = match &clinical.exercise {
@@ -47,14 +43,15 @@ pub fn insert(
         None => "".to_string(),
     };
 
+    println!("insert clinical: {:?}", clinical);
+
     conn.execute(
         "INSERT INTO clinical (
-            patient_id, treatment_course_id, brace, treatment, exercise, mobility, balance, tenderness, percussion, 
-            posture, cobb, flexion_atr, pain_rate, created_at, updated_at
-        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
+            patient_id, brace, treatment, exercise, mobility, balance, tenderness, percussion, 
+            posture, cobb, flexion_atr, pain_rate, extremity, risser, created_at, updated_at
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16)",
         (
-            patient_id,
-            treatment_course_id,
+            clinical.patient_id,
             &brace,
             &clinical.treatment,
             &exercise,
@@ -63,9 +60,11 @@ pub fn insert(
             &clinical.tenderness,
             &clinical.percussion,
             serde_json::to_string(&clinical.posture)?,
-            clinical.cobb,
+            serde_json::to_string(&clinical.cobb)?,
             serde_json::to_string(&clinical.flexion_atr)?,
             clinical.pain_rate,
+            serde_json::to_string(&clinical.extremity)?,
+            clinical.risser,
             now,
             now,
         ),
@@ -75,25 +74,51 @@ pub fn insert(
     Ok(id)
 }
 
-pub fn select(conn: &Connection, treatment_course_id: i64) -> Result<Clinical> {
-    let sql = "SELECT * FROM clinical WHERE treatment_course_id = ?1";
-    let mut stmt = conn.prepare(sql)?;
-    let row = stmt.query_row([treatment_course_id], |row| {
+pub fn get_list(
+    conn: &Connection,
+    patient_id: i64,
+    page: i32,
+    limit: i32,
+) -> Result<PaginationData<Clinical>> {
+    let total_sql = format!(
+        "SELECT COUNT(*) FROM clinical where patient_id = {}",
+        patient_id
+    );
+    let total: i64 = conn.query_row(&total_sql, [], |row| row.get(0))?;
+
+    let mut sql = format!(
+        "SELECT * FROM clinical where patient_id = {} ORDER BY id DESC",
+        patient_id
+    );
+    sql.push_str(&format!(" LIMIT {} OFFSET {}", limit, (page - 1) * limit));
+
+    let mut stmt = conn.prepare(&sql)?;
+    let rows = stmt.query_map([], |row| {
         Ok(Clinical {
-            parent_id: row.get(1)?,
-            treatment_course_id: row.get(2)?,
-            brace: serde_json::from_str(row.get::<_, String>(3)?.as_str()).ok(),
-            treatment: row.get(4)?,
-            exercise: serde_json::from_str(row.get::<_, String>(5)?.as_str()).ok(),
-            mobility: serde_json::from_str(row.get::<_, String>(6)?.as_str()).unwrap(),
-            balance: serde_json::from_str(row.get::<_, String>(7)?.as_str()).unwrap(),
-            tenderness: row.get(8)?,
-            percussion: row.get(9)?,
-            posture: serde_json::from_str(row.get::<_, String>(10)?.as_str()).unwrap(),
-            cobb: row.get(11)?,
-            flexion_atr: serde_json::from_str(row.get::<_, String>(12)?.as_str()).unwrap(),
-            pain_rate: row.get(13)?,
+            id: row.get(0)?,
+            patient_id: row.get(1)?,
+            brace: serde_json::from_str(row.get::<_, String>(2)?.as_str()).ok(),
+            treatment: row.get(3)?,
+            exercise: serde_json::from_str(row.get::<_, String>(4)?.as_str()).ok(),
+            mobility: serde_json::from_str(row.get::<_, String>(5)?.as_str()).unwrap(),
+            balance: serde_json::from_str(row.get::<_, String>(6)?.as_str()).unwrap(),
+            tenderness: row.get(7)?,
+            percussion: row.get(8)?,
+            posture: serde_json::from_str(row.get::<_, String>(9)?.as_str()).unwrap(),
+            cobb: serde_json::from_str(row.get::<_, String>(10)?.as_str()).unwrap(),
+            flexion_atr: serde_json::from_str(row.get::<_, String>(11)?.as_str()).unwrap(),
+            pain_rate: row.get(12)?,
+            extremity: serde_json::from_str(row.get::<_, String>(13)?.as_str()).unwrap(),
+            risser: row.get(14)?,
+            created_at: row.get(15)?,
         })
     })?;
-    Ok(row)
+
+    let items: Vec<Clinical> = rows.collect::<Result<_, _>>()?;
+    Ok(PaginationData {
+        total,
+        items,
+        page,
+        limit,
+    })
 }

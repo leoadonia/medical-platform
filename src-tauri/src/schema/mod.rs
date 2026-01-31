@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-use crate::schema::patient::{Patient, TreatmentCourse};
-
 pub mod clinical;
 pub mod patient;
 pub mod user;
@@ -19,10 +17,4 @@ pub struct PatientSearchRequest {
     pub name: Option<String>,
     pub registration_number: Option<String>,
     pub contact: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PatientInfo {
-    pub patient: Patient,
-    pub treatments: Vec<TreatmentCourse>,
 }

@@ -1,7 +1,7 @@
+import { FormGrid } from "@/app/_components/FormGrid";
 import { usePatientStore } from "@/lib/stores/patient";
 import { GradeOptions } from "@/lib/types/patient";
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { TextItem } from "./TextItem";
 
 export const GradeSelect = () => {
   const { patient, updatePatient } = usePatientStore();
@@ -11,7 +11,7 @@ export const GradeSelect = () => {
   };
 
   return (
-    <TextItem id="grade-label" label="年级">
+    <FormGrid id="grade-label" label="年级">
       <Select
         labelId="grade-label"
         value={patient.grade}
@@ -24,6 +24,6 @@ export const GradeSelect = () => {
           </MenuItem>
         ))}
       </Select>
-    </TextItem>
+    </FormGrid>
   );
 };

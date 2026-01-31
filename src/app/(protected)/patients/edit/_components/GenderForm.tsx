@@ -1,3 +1,4 @@
+import { FormGrid } from "@/app/_components/FormGrid";
 import { TextField } from "@/components/input/TextField";
 import { validateUsingSchema } from "@/lib/schema";
 import { usePatientStore } from "@/lib/stores/patient";
@@ -8,7 +9,6 @@ import {
   RadioGroup,
   SelectChangeEvent,
 } from "@mui/material";
-import { TextItem } from "./TextItem";
 
 export const GenderForm = () => {
   const { patient, updatePatient } = usePatientStore();
@@ -19,7 +19,7 @@ export const GenderForm = () => {
 
   return (
     <>
-      <TextItem id="gender" label="性别">
+      <FormGrid id="gender" label="性别">
         <RadioGroup
           row
           value={patient.gender}
@@ -36,9 +36,9 @@ export const GenderForm = () => {
             />
           ))}
         </RadioGroup>
-      </TextItem>
+      </FormGrid>
       {patient.gender === GenderOptions[1] && (
-        <TextItem id="menarche" label="初潮年龄">
+        <FormGrid id="menarche" label="初潮年龄">
           <TextField
             type="number"
             value={patient.menarche || ""}
@@ -47,7 +47,7 @@ export const GenderForm = () => {
               fn: (v) => validateUsingSchema(MenarcheSchema, Number(v)),
             }}
           />
-        </TextItem>
+        </FormGrid>
       )}
     </>
   );

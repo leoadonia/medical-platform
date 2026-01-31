@@ -3,25 +3,41 @@
 import { TextField } from "@/components/input/TextField";
 import { SearchParams } from "@/lib/types/patient";
 import { Button, Card, CardContent } from "@mui/material";
-import { Plus, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
 import React, { useRef } from "react";
 
 const SearchBar = React.memo(
-  ({ onSearch }: { onSearch: (params: SearchParams) => void }) => {
-    const router = useRouter();
+  ({
+    onSearch,
+    actions,
+  }: {
+    onSearch: (params: SearchParams) => void;
+    actions?: React.ReactNode;
+  }) => {
     const param = useRef<SearchParams>({});
 
     const handleNameChanged = (name: string) => {
-      param.current.name = name;
+      if (name.length === 0) {
+        param.current.name = undefined;
+      } else {
+        param.current.name = name;
+      }
     };
 
     const handleRegistrationChanged = (rn: string) => {
-      param.current.registration_number = rn;
+      if (rn.length === 0) {
+        param.current.registration_number = undefined;
+      } else {
+        param.current.registration_number = rn;
+      }
     };
 
     const handleContactChanged = (contact: string) => {
-      param.current.contact = contact;
+      if (contact.length === 0) {
+        param.current.contact = undefined;
+      } else {
+        param.current.contact = contact;
+      }
     };
 
     return (
@@ -56,15 +72,7 @@ const SearchBar = React.memo(
             >
               查询
             </Button>
-            <Button
-              startIcon={<Plus className="h-4 w-4" />}
-              variant="outlined"
-              color="info"
-              className="gap-1 px-4"
-              onClick={() => router.push("/patients/edit")}
-            >
-              新增
-            </Button>
+            {actions}
           </div>
         </CardContent>
       </Card>

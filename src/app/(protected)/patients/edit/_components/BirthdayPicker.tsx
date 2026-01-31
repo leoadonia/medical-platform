@@ -1,7 +1,7 @@
+import { FormGrid } from "@/app/_components/FormGrid";
 import { DatePicker } from "@/components/data/TimePicker";
 import { usePatientStore } from "@/lib/stores/patient";
 import { useMemo } from "react";
-import { TextItem } from "./TextItem";
 
 export const BirthdayPicker = () => {
   const { patient, updatePatient } = usePatientStore();
@@ -11,13 +11,13 @@ export const BirthdayPicker = () => {
   }, []);
 
   return (
-    <TextItem id="birthday" label="出生年月">
+    <FormGrid id="birthday" label="出生年月">
       <DatePicker
         value={patient.birthday}
         maxDate={now}
         onChange={(v) => updatePatient({ birthday: v })}
         className="min-w-3xs"
       />
-    </TextItem>
+    </FormGrid>
   );
 };

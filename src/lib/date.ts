@@ -11,3 +11,14 @@ export const formatAgeFromBirthday = (birthday: number): number => {
 
   return age;
 };
+
+export const formatDate = (timestamp: number): string => {
+  return new Date(timestamp * 1000).toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+};
