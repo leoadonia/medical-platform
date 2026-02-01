@@ -1,5 +1,13 @@
+import { AgeDistribution } from "./_components/AgeDistribution";
+import { GrowthDistribution } from "./_components/GrowthDistribution";
+
 const DataPage = () => {
-  return <>data</>;
+  return (
+    <div className="flex flex-col gap-6">
+      <AgeDistribution />
+      <GrowthDistribution />
+    </div>
+  );
 };
 
 export default DataPage;

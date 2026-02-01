@@ -3,7 +3,8 @@
 import { GradientCircularProgress } from "@/components/animation/Loading";
 import { ColumnDef, Table } from "@/components/data";
 import { getClinicalList } from "@/lib/apis/clinical";
-import { formatDate } from "@/lib/date";
+import { formatAgeFromBirthday, formatDate } from "@/lib/date";
+import { useClinicalStore } from "@/lib/stores/clinical";
 import { Clinical } from "@/lib/types/clinical";
 import { PaginationData } from "@/lib/types/pagination";
 import { useEffect, useState } from "react";
@@ -15,6 +16,9 @@ export const ClinicalTable = ({
   id: number;
   operator: (clinical: Clinical) => React.ReactNode;
 }) => {
+  const { patient } = useClinicalStore();
+  const age = formatAgeFromBirthday(patient!.birthday);
+
   const [page, setPage] = useState<number>(1);
   const [rows, setRows] = useState<PaginationData<Clinical>>({
     items: [],
@@ -54,6 +58,10 @@ export const ClinicalTable = ({
       field: "exacerbate",
       headerName: "恶化因子",
       render: (row: Clinical) => {
+        if (age > 0 && row.cobb.cobb > 0) {
+          return (row.cobb.cobb - 3 * row.risser) / age;
+        }
+
         return "";
       },
     },
