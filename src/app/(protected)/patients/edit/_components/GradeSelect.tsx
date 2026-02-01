@@ -1,4 +1,4 @@
-import { FormGrid } from "@/app/_components/FormGrid";
+import { FormGrid } from "@/components/data/FormGrid";
 import { usePatientStore } from "@/lib/stores/patient";
 import { GradeOptions } from "@/lib/types/patient";
 import { MenuItem, Select, SelectChangeEvent } from "@mui/material";

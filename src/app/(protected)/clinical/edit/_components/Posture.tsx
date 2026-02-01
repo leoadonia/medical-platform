@@ -1,4 +1,4 @@
-import { FormGrid } from "@/app/_components/FormGrid";
+import { FormGrid } from "@/components/data/FormGrid";
 import { useClinicalStore } from "@/lib/stores/clinical";
 import { PostureLevelOptions } from "@/lib/types/clinical";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";

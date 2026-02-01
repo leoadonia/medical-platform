@@ -1,4 +1,4 @@
-import { FormGrid } from "@/app/_components/FormGrid";
+import { FormGrid } from "@/components/data/FormGrid";
 import { TextField } from "@/components/input/TextField";
 import { useClinicalStore } from "@/lib/stores/clinical";
 import { SkinComplicationOptions } from "@/lib/types/clinical";

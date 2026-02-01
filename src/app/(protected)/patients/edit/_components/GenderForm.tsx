@@ -1,4 +1,4 @@
-import { FormGrid } from "@/app/_components/FormGrid";
+import { FormGrid } from "@/components/data/FormGrid";
 import { TextField } from "@/components/input/TextField";
 import { validateUsingSchema } from "@/lib/schema";
 import { usePatientStore } from "@/lib/stores/patient";

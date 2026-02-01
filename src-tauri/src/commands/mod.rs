@@ -3,4 +3,5 @@ pub mod clinical;
 pub mod patient;
 pub mod questionnaire;
 pub mod radiology;
+pub mod settings;
 pub mod user;

@@ -1,8 +1,8 @@
-import { useClinicalStore } from "@/lib/stores/clinical";
-import { ClinicalCard } from "./ClinicalCard";
-import { FormGrid } from "@/app/_components/FormGrid";
+import { FormGrid } from "@/components/data/FormGrid";
 import { TextField } from "@/components/input/TextField";
+import { useClinicalStore } from "@/lib/stores/clinical";
 import { Slider } from "@mui/material";
+import { ClinicalCard } from "./ClinicalCard";
 
 export const Risser = () => {
   const { clinical, updateClinical } = useClinicalStore();

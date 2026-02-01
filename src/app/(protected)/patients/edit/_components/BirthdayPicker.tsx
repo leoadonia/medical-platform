@@ -1,4 +1,4 @@
-import { FormGrid } from "@/app/_components/FormGrid";
+import { FormGrid } from "@/components/data/FormGrid";
 import { DatePicker } from "@/components/data/TimePicker";
 import { usePatientStore } from "@/lib/stores/patient";
 import { useMemo } from "react";

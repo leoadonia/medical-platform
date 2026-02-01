@@ -1,7 +1,7 @@
 "use client";
 
-import { FormGrid } from "@/app/_components/FormGrid";
 import { BackHeader } from "@/components/BackHeader";
+import { FormGrid } from "@/components/data/FormGrid";
 import { TextField } from "@/components/input/TextField";
 import {
   createPatient,
