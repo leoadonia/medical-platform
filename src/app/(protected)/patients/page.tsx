@@ -12,7 +12,6 @@ const PatientsPage = () => {
   const router = useRouter();
 
   const handleEdit = (patient: Patient) => {
-    console.log(patient);
     setPatient(patient);
     router.push("/patients/edit");
   };

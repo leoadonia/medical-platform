@@ -50,6 +50,7 @@ pub fn run() {
             commands::patient::update_patient,
             commands::clinical::get_clinical_list,
             commands::clinical::insert_clinical,
+            commands::clinical::update_clinical,
             commands::radiology::insert_radiology,
             commands::radiology::update_radiology,
             commands::radiology::select_radiology_list,

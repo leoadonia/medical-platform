@@ -135,6 +135,11 @@ impl Storage {
         clinical::insert(conn, clinical)
     }
 
+    pub fn update_clinical(&self, clinical: &Clinical) -> Result<()> {
+        let conn = self.conn.as_ref().unwrap();
+        clinical::update(conn, clinical)
+    }
+
     pub fn insert_radiology(&self, radiology: &Radiology) -> Result<i64> {
         let conn = self.conn.as_ref().unwrap();
         let data_dir = self.data_dir.as_ref().unwrap();

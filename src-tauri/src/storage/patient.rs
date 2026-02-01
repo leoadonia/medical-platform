@@ -6,6 +6,7 @@ use rusqlite::{
 };
 
 use crate::schema::{
+    clinical::Clinical,
     patient::{Patient, PatientState},
     PaginationData, PatientSearchRequest,
 };
@@ -105,10 +106,11 @@ pub fn update(conn: &Connection, patient: &Patient) -> Result<()> {
 
     conn.execute(
         "UPDATE patient SET 
-            name = ?1, gender = ?2, menarche = ?3, birthday = ?4, school = ?5, grade = ?6, 
-            weight = ?7, height = ?8, contact = ?9, state = ?10, updated_at = ?11
-        WHERE id = ?12",
+            registration_number = ?1, name = ?2, gender = ?3, menarche = ?4, birthday = ?5, school = ?6, grade = ?7, 
+            weight = ?8, height = ?9, contact = ?10, state = ?11, updated_at = ?12
+        WHERE id = ?13",
         (
+            &patient.registration_number,
             &patient.name,
             &patient.gender,
             &patient.menarche,
@@ -191,4 +193,20 @@ pub fn get_list(
         page,
         limit,
     })
+}
+
+// Update the patient status once the latest clinical has been updated.
+pub fn update_state(conn: &Connection, id: i64, clinical: &Clinical) -> Result<()> {
+    let state = PatientState::from_clinical(clinical.risser, clinical.cobb.cobb);
+    if state == PatientState::Init {
+        return Ok(());
+    }
+
+    let now = chrono::Utc::now().timestamp();
+    conn.execute(
+        "UPDATE patient SET state = ?1, updated_at = ?2 WHERE id = ?3",
+        (&state, now, id),
+    )?;
+
+    Ok(())
 }

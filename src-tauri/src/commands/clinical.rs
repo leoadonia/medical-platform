@@ -26,3 +26,11 @@ pub async fn insert_clinical(storage: State<'_, Mutex<Storage>>, data: &str) -> 
     let id = storage.insert_clinical(&clinical)?;
     Ok(id)
 }
+
+#[tauri::command]
+pub async fn update_clinical(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
+    let storage = storage.lock().unwrap();
+    let clinical: Clinical = serde_json::from_str(data)?;
+    storage.update_clinical(&clinical)?;
+    Ok(())
+}

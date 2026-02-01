@@ -1,7 +1,7 @@
 "use client";
 
 import { BackHeader } from "@/components/BackHeader";
-import { createClinical } from "@/lib/apis/clinical";
+import { createClinical, updateClinical } from "@/lib/apis/clinical";
 import { useClinicalStore } from "@/lib/stores/clinical";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,12 @@ const ClinicalEditPage = () => {
 
   const handleSubmit = async () => {
     try {
-      await createClinical(clinical);
+      if (clinical.id === 0) {
+        await createClinical(clinical);
+      } else {
+        await updateClinical(clinical);
+      }
+
       toast.success("添加成功.");
       router.push("/clinical");
     } catch (err) {

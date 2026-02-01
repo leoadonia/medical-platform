@@ -13,7 +13,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import Pagination from "./Pagination";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -56,8 +56,7 @@ export type TableProps = MuiTableProps & {
 };
 
 const TableMemo = (props: TableProps) => {
-  const { columns, onPageSwitch, rows, ...others } = props;
-  const [page, setPage] = useState<number>(1);
+  const { columns, onPageSwitch, rows } = props;
   const pages = Math.ceil(props.rows.total / (props.rows.limit || 10));
 
   const renderTableBody = () => {
@@ -145,7 +144,7 @@ const TableMemo = (props: TableProps) => {
             count={pages}
             color="error"
             page={props.rows.page!}
-            onChange={(_, page) => props.onPageSwitch(page)}
+            onChange={(_, page) => onPageSwitch(page)}
           />
         )}
       </Box>

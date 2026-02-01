@@ -12,7 +12,7 @@ export const Cobb = () => {
       <div className="flex flex-wrap gap-4">
         <TextField
           type="number"
-          value={clinical.cobb.cobb || 10}
+          value={clinical.cobb.cobb}
           onValueChange={(v) =>
             updateClinical({ cobb: { ...clinical.cobb, cobb: Number(v) } })
           }

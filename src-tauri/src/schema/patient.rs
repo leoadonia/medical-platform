@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum PatientState {
     Init,
 
@@ -18,6 +18,36 @@ pub enum PatientState {
     MatureMild,
     MatureModerate,
     MatureSerious,
+}
+
+impl PatientState {
+    pub fn from_clinical(risser: i8, cobb: i32) -> Self {
+        if cobb < 10 || cobb > 40 {
+            return PatientState::Init;
+        }
+
+        if cobb < 20 {
+            return match risser {
+                0 => PatientState::StableMild,
+                1 | 2 | 3 => PatientState::ProgressiveMild,
+                _ => PatientState::MatureMild,
+            };
+        }
+
+        if cobb < 40 {
+            return match risser {
+                0 => PatientState::StableModerate,
+                1 | 2 | 3 => PatientState::ProgressiveModerate,
+                _ => PatientState::MatureModerate,
+            };
+        }
+
+        match risser {
+            0 => PatientState::StableSerious,
+            1 | 2 | 3 => PatientState::ProgressiveSerious,
+            _ => PatientState::MatureSerious,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

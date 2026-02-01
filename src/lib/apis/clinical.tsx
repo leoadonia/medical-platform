@@ -19,3 +19,7 @@ export const getClinicalList = async (
 export const createClinical = async (clinical: Clinical): Promise<void> => {
   await invoke("insert_clinical", { data: JSON.stringify(clinical) });
 };
+
+export const updateClinical = async (clinical: Clinical): Promise<void> => {
+  await invoke("update_clinical", { data: JSON.stringify(clinical) });
+};

@@ -1,7 +1,10 @@
 use anyhow::Result;
 use rusqlite::Connection;
 
-use crate::schema::{clinical::Clinical, PaginationData};
+use crate::{
+    schema::{clinical::Clinical, PaginationData},
+    storage::patient,
+};
 
 pub fn create_table(conn: &Connection) -> Result<()> {
     conn.execute(
@@ -71,7 +74,48 @@ pub fn insert(conn: &Connection, clinical: &Clinical) -> Result<i64> {
     )?;
 
     let id = conn.last_insert_rowid();
+
+    patient::update_state(conn, clinical.patient_id, clinical)?;
+
     Ok(id)
+}
+
+pub fn update(conn: &Connection, clinical: &Clinical) -> Result<()> {
+    let now = chrono::Utc::now().timestamp();
+
+    let exercise = match &clinical.exercise {
+        Some(exercise) => serde_json::to_string(exercise)?,
+        None => "".to_string(),
+    };
+
+    let brace = match &clinical.brace {
+        Some(brace) => serde_json::to_string(brace)?,
+        None => "".to_string(),
+    };
+
+    conn.execute(
+        "UPDATE clinical SET 
+            brace = ?1, treatment = ?2, exercise = ?3, mobility = ?4, balance = ?5, tenderness = ?6, percussion = ?7, 
+            posture = ?8, cobb = ?9, flexion_atr = ?10, pain_rate = ?11, extremity = ?12, risser = ?13, updated_at = ?14
+        WHERE id = ?15",
+        (
+            &brace,
+            &clinical.treatment,
+            &exercise,
+            serde_json::to_string(&clinical.mobility)?,
+            serde_json::to_string(&clinical.balance)?,
+            &clinical.tenderness,
+            &clinical.percussion,
+            serde_json::to_string(&clinical.posture)?,
+            serde_json::to_string(&clinical.cobb)?,
+            serde_json::to_string(&clinical.flexion_atr)?,
+            clinical.pain_rate,
+            serde_json::to_string(&clinical.extremity)?,
+            clinical.risser,
+            now,
+            clinical.id))?;
+
+    Ok(())
 }
 
 pub fn get_list(

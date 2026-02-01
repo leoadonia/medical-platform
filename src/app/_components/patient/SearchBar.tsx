@@ -1,6 +1,7 @@
 "use client";
 
 import { TextField } from "@/components/input/TextField";
+import { usePatientStore } from "@/lib/stores/patient";
 import { SearchParams } from "@/lib/types/patient";
 import { Button, Card, CardContent } from "@mui/material";
 import { Plus, Search } from "lucide-react";
@@ -35,6 +36,11 @@ const SearchBar = React.memo(
       } else {
         param.current.contact = contact;
       }
+    };
+
+    const handleAddPatient = () => {
+      usePatientStore.getState().clearPatient();
+      router.push("/patients/edit");
     };
 
     return (
@@ -74,7 +80,7 @@ const SearchBar = React.memo(
               variant="outlined"
               color="info"
               className="gap-1 px-4"
-              onClick={() => router.push("/patients/edit")}
+              onClick={handleAddPatient}
             >
               新增患者
             </Button>

@@ -21,17 +21,10 @@ import toast from "react-hot-toast";
 import { BirthdayPicker } from "./_components/BirthdayPicker";
 import { GenderForm } from "./_components/GenderForm";
 import { GradeSelect } from "./_components/GradeSelect";
-import { useEffect } from "react";
 
 const EditPage = () => {
   const { patient, updatePatient } = usePatientStore();
   const router = useRouter();
-
-  useEffect(() => {
-    return () => {
-      usePatientStore.getState().clearPatient();
-    };
-  }, []);
 
   const bmi = () => {
     if (patient.height && patient.weight) {
