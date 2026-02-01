@@ -9,7 +9,6 @@ import {
   CircularProgress,
   FormLabel,
   Grid,
-  Paper,
   Typography,
 } from "@mui/material";
 import { ImageUp } from "lucide-react";
@@ -72,19 +71,9 @@ export const ImageUploader = (props: {
                     alt={title}
                   />
                 ) : (
-                  <Paper
-                    sx={{
-                      width: 180,
-                      height: 200,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: 2,
-                    }}
-                    elevation={2}
-                  >
+                  <div className="flex h-50 w-45 items-center justify-center rounded-md border border-white shadow-lg">
                     <ImageUp color="gray" className="h-12 w-12" />
-                  </Paper>
+                  </div>
                 )}
               </CardActionArea>
             </Box>

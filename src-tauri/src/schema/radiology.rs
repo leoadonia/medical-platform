@@ -11,4 +11,5 @@ pub struct Radiology {
     pub posture_backend: String,
     pub posture_left: String,
     pub posture_right: String,
+    pub created_at: i64,
 }

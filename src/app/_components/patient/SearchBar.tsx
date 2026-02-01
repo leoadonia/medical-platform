@@ -3,17 +3,14 @@
 import { TextField } from "@/components/input/TextField";
 import { SearchParams } from "@/lib/types/patient";
 import { Button, Card, CardContent } from "@mui/material";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useRef } from "react";
 
 const SearchBar = React.memo(
-  ({
-    onSearch,
-    actions,
-  }: {
-    onSearch: (params: SearchParams) => void;
-    actions?: React.ReactNode;
-  }) => {
+  ({ onSearch }: { onSearch: (params: SearchParams) => void }) => {
+    const router = useRouter();
+
     const param = useRef<SearchParams>({});
 
     const handleNameChanged = (name: string) => {
@@ -72,7 +69,15 @@ const SearchBar = React.memo(
             >
               查询
             </Button>
-            {actions}
+            <Button
+              startIcon={<Plus className="h-4 w-4" />}
+              variant="outlined"
+              color="info"
+              className="gap-1 px-4"
+              onClick={() => router.push("/patients/edit")}
+            >
+              新增患者
+            </Button>
           </div>
         </CardContent>
       </Card>

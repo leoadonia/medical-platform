@@ -140,4 +140,20 @@ impl Storage {
         let data_dir = self.data_dir.as_ref().unwrap();
         radiology::insert(conn, radiology, data_dir)
     }
+
+    pub fn update_radiology(&self, radiology: &Radiology) -> Result<()> {
+        let data_dir = self.data_dir.as_ref().unwrap();
+        radiology::update(radiology, data_dir)
+    }
+
+    pub fn select_radiology_list(
+        &self,
+        patient_id: i64,
+        page: i32,
+        limit: i32,
+    ) -> Result<PaginationData<Radiology>> {
+        let conn = self.conn.as_ref().unwrap();
+        let data_dir = self.data_dir.as_ref().unwrap();
+        radiology::select_list(conn, patient_id, page, limit, data_dir)
+    }
 }

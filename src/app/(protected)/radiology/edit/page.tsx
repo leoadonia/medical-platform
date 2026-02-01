@@ -1,15 +1,39 @@
 "use client";
 
+import { BackHeader } from "@/components/BackHeader";
 import { ImageUploader } from "@/components/input/ImageUploader";
+import {
+  insertRadiology,
+  updateRadiology as updateRadiologyCommand,
+} from "@/lib/apis/radiology";
 import { useRadiologyStore } from "@/lib/stores/radiology";
-import { Alert, Typography } from "@mui/material";
+import { Alert, Button, Typography } from "@mui/material";
 import { Info } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const RadiologyEditPage = () => {
+  const router = useRouter();
   const { radiology, updateRadiology } = useRadiologyStore();
+
+  const handleSubmit = async () => {
+    try {
+      if (radiology.id === 0) {
+        await insertRadiology(radiology);
+      } else {
+        await updateRadiologyCommand(radiology);
+      }
+
+      toast.success("上传成功!");
+      router.replace("/radiology");
+    } catch (err) {
+      toast.error(err as string);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
+      <BackHeader title={radiology.id === 0 ? "新增" : "编辑"} />
       <Alert
         icon={<Info className="h-4 w-4" />}
         severity="info"
@@ -51,6 +75,13 @@ const RadiologyEditPage = () => {
         src={radiology.posture_right}
         onImageSelected={(src) => updateRadiology({ posture_right: src })}
       />
+
+      <Button
+        className="from-primary-200 to-info-400 mx-auto mt-8 flex min-w-3xs bg-linear-to-r text-white"
+        onClick={handleSubmit}
+      >
+        确定
+      </Button>
     </div>
   );
 };

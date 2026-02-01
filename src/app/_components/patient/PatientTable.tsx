@@ -7,16 +7,12 @@ import { getPatients } from "@/lib/apis/patient";
 import { formatAgeFromBirthday, formatDate } from "@/lib/date";
 import { PaginationData } from "@/lib/types/pagination";
 import { Patient, SearchParams } from "@/lib/types/patient";
-import { Button } from "@mui/material";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 
 export const PatientTable = (props: {
   operator?: (patient: Patient) => React.ReactNode;
 }) => {
-  const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const [patients, setPatients] = useState<PaginationData<Patient>>({
     total: 0,
@@ -92,20 +88,7 @@ export const PatientTable = (props: {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <SearchBar
-        onSearch={handleSearch}
-        actions={
-          <Button
-            startIcon={<Plus className="h-4 w-4" />}
-            variant="outlined"
-            color="info"
-            className="gap-1 px-4"
-            onClick={() => router.push("/patients/edit")}
-          >
-            新增
-          </Button>
-        }
-      />
+      <SearchBar onSearch={handleSearch} />
 
       {loading ? (
         <GradientCircularProgress />

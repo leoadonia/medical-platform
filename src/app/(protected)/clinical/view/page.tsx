@@ -1,6 +1,6 @@
 "use client";
 
-import { ClinicalTable } from "@/app/_components/_clinical/ClinicalTable";
+import { ClinicalTable } from "@/app/_components/clinical/ClinicalTable";
 import { PatientViewCard } from "@/app/_components/patient/PatientViewCard";
 import { GradientCircularProgress } from "@/components/animation/Loading";
 import { useClinicalStore } from "@/lib/stores/clinical";

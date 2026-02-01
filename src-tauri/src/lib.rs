@@ -50,7 +50,10 @@ pub fn run() {
             commands::patient::update_patient,
             commands::clinical::get_clinical_list,
             commands::clinical::insert_clinical,
-            commands::radiology::insert_radiology
+            commands::radiology::insert_radiology,
+            commands::radiology::update_radiology,
+            commands::radiology::select_radiology_list,
+            commands::asset::resolve_asset,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

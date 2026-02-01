@@ -1,3 +1,4 @@
+pub mod asset;
 pub mod clinical;
 pub mod patient;
 pub mod radiology;
