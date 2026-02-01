@@ -23,7 +23,7 @@ const ClinicalPage = () => {
   return (
     <PatientTable
       operator={(patient: Patient) => (
-        <div className="flex justify-center gap-2">
+        <>
           <Tooltip title="添加临床信息">
             <IconButton color="info" onClick={() => handleAdd(patient.id)}>
               <UserRoundPlus className="h-4 w-4" />
@@ -34,7 +34,7 @@ const ClinicalPage = () => {
               <NotebookTabs className="h-4 w-4" />
             </IconButton>
           </Tooltip>
-        </div>
+        </>
       )}
     />
   );

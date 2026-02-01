@@ -1,9 +1,9 @@
 use anyhow::Result;
-use rusqlite::{params_from_iter, Connection};
+use rusqlite::Connection;
 
 use crate::schema::{
-    patient::{QuestionAnswer, QuestionnaireWithPatient},
-    PaginationData, PatientSearchRequest,
+    questionnaire::{QuestionAnswer, Questionnaire},
+    PaginationData,
 };
 
 pub fn create_table(conn: &Connection) -> Result<()> {
@@ -38,6 +38,7 @@ pub fn insert_questionnaire(
 ) -> Result<()> {
     let now = chrono::Utc::now().timestamp();
     let score: i64 = answers.iter().map(|a| a.score as i64).sum();
+    println!(">>>> 1, {:?}, score: {}", answers, score);
 
     let tx = conn.transaction()?;
     tx.execute(
@@ -78,61 +79,32 @@ pub fn select_answers_by_id(conn: &Connection, id: i64) -> Result<Vec<QuestionAn
 
 pub fn select_questionnaire_list(
     conn: &Connection,
-    request: &PatientSearchRequest,
+    patient_id: i64,
     page: i32,
     limit: i32,
-) -> Result<PaginationData<QuestionnaireWithPatient>> {
-    let mut conditions = Vec::new();
-    let mut inputs = Vec::new();
-
-    if let Some(name) = &request.name {
-        conditions.push(format!("p.name = ?{}", inputs.len() + 1));
-        inputs.push(name);
-    }
-
-    if let Some(registration_number) = &request.registration_number {
-        conditions.push(format!("p.registration_number = ?{}", inputs.len() + 1));
-        inputs.push(registration_number);
-    }
-
-    if let Some(contact) = &request.contact {
-        conditions.push(format!("p.contact = ?{}", inputs.len() + 1));
-        inputs.push(contact);
-    }
-
-    let where_clause = if conditions.is_empty() {
-        String::new()
-    } else {
-        format!(" WHERE {}", conditions.join(" AND "))
-    };
-
+) -> Result<PaginationData<Questionnaire>> {
     let total_sql = format!(
-        "SELECT COUNT(*) FROM questionnaire q
-        JOIN patient p ON q.patient_id = p.id
-        {}",
-        where_clause
+        "SELECT COUNT(*) FROM questionnaire WHERE patient_id = {}",
+        patient_id
     );
-    let total: i64 = conn.query_row(&total_sql, params_from_iter(inputs.clone()), |row| {
-        row.get(0)
-    })?;
+    let total: i64 = conn.query_row(&total_sql, [], |row| row.get(0))?;
 
-    let mut sql = format!("SELECT q.id, q.score, q.created_at, p.registration_number, p.name, p.gender, p.birthday, p.weight, p.height FROM questionnaire q
-        JOIN patient p ON q.patient_id = p.id
-        {} ORDER BY q.created_at DESC", where_clause);
-    sql.push_str(&format!(" LIMIT {} OFFSET {}", limit, (page - 1) * limit));
+    let sql = format!(
+        "
+        SELECT id, patient_id, score, created_at FROM questionnaire
+        WHERE patient_id = {} ORDER BY created_at DESC LIMIT {} OFFSET {}",
+        patient_id,
+        limit,
+        (page - 1) * limit
+    );
 
     let mut stmt = conn.prepare(&sql)?;
-    let rows = stmt.query_map(params_from_iter(inputs), |row| {
-        Ok(QuestionnaireWithPatient {
+    let rows = stmt.query_map([], |row| {
+        Ok(Questionnaire {
             id: row.get(0)?,
-            score: row.get(1)?,
-            created_at: row.get(2)?,
-            registration_number: row.get(3)?,
-            name: row.get(4)?,
-            gender: row.get(5)?,
-            birthday: row.get(6)?,
-            weight: row.get(7)?,
-            height: row.get(8)?,
+            patient_id: row.get(1)?,
+            score: row.get(2)?,
+            created_at: row.get(3)?,
         })
     })?;
 

@@ -63,7 +63,7 @@ const ViewPage = () => {
         id={patient.id}
         operator={(radiology: Radiology) => (
           <Tooltip title="修改医学图像">
-            <IconButton color="info" onClick={() => handleEdit(radiology)}>
+            <IconButton color="warning" onClick={() => handleEdit(radiology)}>
               <NotebookPen className="h-4 w-4" />
             </IconButton>
           </Tooltip>

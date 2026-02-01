@@ -5,13 +5,13 @@ use rusqlite::Connection;
 
 use crate::schema::{
     clinical::Clinical,
-    patient::{Patient, QuestionAnswer, QuestionnaireWithPatient},
+    patient::Patient,
+    questionnaire::{QuestionAnswer, Questionnaire},
     radiology::Radiology,
     user::User,
     PaginationData, PatientSearchRequest,
 };
 
-mod asset;
 mod clinical;
 mod patient;
 mod questionnaire;
@@ -112,12 +112,12 @@ impl Storage {
 
     pub fn select_questionnaire_list(
         &self,
-        request: &PatientSearchRequest,
+        patient_id: i64,
         page: i32,
         limit: i32,
-    ) -> Result<PaginationData<QuestionnaireWithPatient>> {
+    ) -> Result<PaginationData<Questionnaire>> {
         let conn = self.conn.as_ref().unwrap();
-        questionnaire::select_questionnaire_list(conn, request, page, limit)
+        questionnaire::select_questionnaire_list(conn, patient_id, page, limit)
     }
 
     pub fn select_clinical_list(

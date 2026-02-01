@@ -81,7 +81,11 @@ export const PatientTable = (props: {
       field: "operator",
       headerName: "操作",
       render: (row: Patient) => {
-        return props.operator!(row);
+        return (
+          <div className="flex justify-center gap-2">
+            {props.operator!(row)}
+          </div>
+        );
       },
     });
   }

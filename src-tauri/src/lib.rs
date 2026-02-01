@@ -54,6 +54,9 @@ pub fn run() {
             commands::radiology::update_radiology,
             commands::radiology::select_radiology_list,
             commands::asset::resolve_asset,
+            commands::questionnaire::add_questionnaire,
+            commands::questionnaire::get_questionnaire,
+            commands::questionnaire::get_questionnaires
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

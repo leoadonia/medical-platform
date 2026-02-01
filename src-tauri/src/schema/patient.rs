@@ -39,23 +39,3 @@ pub struct Patient {
 
     pub state: PatientState,
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct QuestionAnswer {
-    #[serde(rename = "index")]
-    pub question_idx: i64,
-    pub score: i64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct QuestionnaireWithPatient {
-    pub id: i64,
-    pub score: i16,
-    pub created_at: i64,
-    pub registration_number: String,
-    pub name: String,
-    pub gender: String,
-    pub birthday: i64,
-    pub weight: f32,
-    pub height: f32,
-}

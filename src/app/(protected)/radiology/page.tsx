@@ -23,7 +23,7 @@ const RadiologyPage = () => {
   return (
     <PatientTable
       operator={(patient: Patient) => (
-        <div className="flex gap-4">
+        <>
           <Tooltip title="添加医学影象">
             <IconButton color="info" onClick={() => handleAdd(patient)}>
               <BatteryPlus className="h-4 w-4" />
@@ -34,7 +34,7 @@ const RadiologyPage = () => {
               <Radiation className="h-4 w-4" />
             </IconButton>
           </Tooltip>
-        </div>
+        </>
       )}
     />
   );

@@ -98,6 +98,12 @@ pub fn select_list(
     limit: i32,
     data_dir: &str,
 ) -> Result<PaginationData<Radiology>> {
+    let total_sql = format!(
+        "SELECT COUNT(*) FROM radiology WHERE patient_id = {}",
+        patient_id
+    );
+    let total: i64 = conn.query_row(&total_sql, [], |row| row.get(0))?;
+
     let offset = (page - 1) * limit;
     let mut stmt = conn.prepare(
         "SELECT id, patient_id, created_at FROM radiology WHERE patient_id = ?1 ORDER BY id DESC LIMIT ?2 OFFSET ?3",
@@ -154,7 +160,7 @@ pub fn select_list(
     Ok(PaginationData {
         page,
         limit,
-        total: 0,
+        total: total,
         items: data,
     })
 }
