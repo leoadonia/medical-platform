@@ -63,7 +63,7 @@ export const Menu = (props: MenuData) => {
   return (
     <CardActionArea
       data-active={path === href || path.startsWith(`${href}/`)}
-      className="data-[active=true]:bg-primary-100 hover:bg-primary-50 rounded-lg p-2"
+      className="rounded-lg p-2 hover:bg-pink-100 data-[active=true]:bg-pink-300"
       onClick={() => {
         router.push(href);
       }}

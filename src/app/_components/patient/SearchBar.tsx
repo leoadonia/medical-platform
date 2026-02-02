@@ -44,7 +44,7 @@ const SearchBar = React.memo(
     };
 
     return (
-      <Card className="w-full bg-white/80 shadow-md">
+      <Card className="border-primary-50 w-full border bg-white/80 shadow-md">
         <CardContent className="flex flex-col gap-2">
           <div className="flex flex-wrap gap-4">
             <TextField

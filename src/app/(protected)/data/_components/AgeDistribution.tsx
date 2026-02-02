@@ -50,7 +50,10 @@ const DistributionCard = (props: {
 export const AgeDistribution = () => {
   return (
     <Box display={"flex"} flexDirection={"column"} gap={4}>
-      <div className="text-info-300 text-xl font-medium">年龄分布</div>
+      {/* w-20 is needed. */}
+      <div className="from-primary-600 to-info-600 w-20 bg-linear-to-r bg-clip-text text-xl font-medium text-transparent">
+        年龄分布
+      </div>
       <Box display={"flex"} gap={2} flexWrap={"wrap"} px={4}>
         <DistributionCard
           age="<6岁"

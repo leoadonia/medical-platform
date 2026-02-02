@@ -5,7 +5,9 @@ import { GrowthCard } from "./GrowthCard";
 export const GrowthDistribution = () => {
   return (
     <Box display={"flex"} flexDirection={"column"} gap={4} pt={8}>
-      <div className="text-primary-300 text-xl font-medium">新增趋势</div>
+      <div className="from-info-600 w-20 bg-linear-to-r to-pink-600 bg-clip-text text-xl font-medium text-transparent">
+        新增趋势
+      </div>
       <Box
         display={"flex"}
         gap={4}

@@ -20,7 +20,7 @@ const Header = () => {
   return (
     <Typography
       variant="h5"
-      className="from-primary-600 to-secondary-600 bg-linear-to-r bg-clip-text text-transparent"
+      className="from-primary-600 to-info-600 bg-linear-to-r bg-clip-text text-transparent"
     >
       数据平台
     </Typography>
@@ -41,14 +41,14 @@ const Menus = () => {
         href="/clinical"
       />
       <Menu
-        title="问卷信息"
-        icon={<ShieldQuestion className="h-4 w-4" />}
-        href="/questionnaire"
-      />
-      <Menu
         title="影像学信息"
         icon={<Wallpaper className="h-4 w-4" />}
         href="/radiology"
+      />
+      <Menu
+        title="问卷信息"
+        icon={<ShieldQuestion className="h-4 w-4" />}
+        href="/questionnaire"
       />
       <Menu
         title="数据管理"
