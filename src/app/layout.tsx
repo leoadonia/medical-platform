@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { AppNavbar } from "./_components/AppNavbar";
 import { AppSidebar } from "./_components/AppSidebar";
 import "./globals.css";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Medical Platform",
@@ -20,26 +21,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider theme={lightTheme}>
-            <div className="from-primary-50 to-info-50 w-full overflow-hidden bg-linear-to-br via-gray-50">
-              <div className="flex max-h-screen">
-                <AppSidebar />
-                <div className="flex-1 flex-col">
-                  <AppNavbar />
-                  <div className="h-[calc(100vh-52px)] overflow-y-auto p-4 lg:px-8">
-                    {children}
+        <Suspense>
+          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+            <ThemeProvider theme={lightTheme}>
+              <div className="from-primary-50 to-info-50 w-full overflow-hidden bg-linear-to-br via-gray-50">
+                <div className="flex max-h-screen">
+                  <AppSidebar />
+                  <div className="flex-1 flex-col">
+                    <AppNavbar />
+                    <div className="h-[calc(100vh-52px)] overflow-y-auto p-4 lg:px-8">
+                      {children}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <Toaster
-              toastOptions={{
-                position: "top-right",
-              }}
-            />
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+              <Toaster
+                toastOptions={{
+                  position: "top-right",
+                }}
+              />
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </Suspense>
       </body>
     </html>
   );

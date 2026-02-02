@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "medical-platform",
+        "title": "医学数据平台",
         "width": 1024,
         "height": 800,
         "resizable": true,
