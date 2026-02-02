@@ -3,7 +3,7 @@
 import { PatientViewCard } from "@/app/_components/patient/PatientViewCard";
 import Question from "@/app/_components/questionnaire/Question";
 import { GradientCircularProgress } from "@/components/animation/Loading";
-import { BackHeader } from "@/components/BackHeader";
+import { useNavbarStore } from "@/components/sidebar/store";
 import { addQuestionnaire } from "@/lib/apis/questionnaire";
 import { useQuestionnaireStore } from "@/lib/stores/questionnaire";
 import { QuestionOptions } from "@/lib/types/questionnaire";
@@ -50,11 +50,12 @@ const QuestionnaireAddPage = () => {
   }
 
   const handleSubmit = async () => {
-    console.log(">>>> 1, ", answers);
     try {
       await addQuestionnaire(patient.id, answers);
       toast.success("问卷添加成功");
-      router.push("/questionnaire");
+
+      const href = useNavbarStore.getState().back() || "/questionnaire";
+      router.push(href);
     } catch (err) {
       toast.error(err as string);
     }
@@ -90,7 +91,6 @@ const QuestionnaireAddPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BackHeader title="SRS-22 问卷" />
       <PatientViewCard patient={patient} />
       <Card className="rounded-2xl border border-pink-300 bg-white/60 shadow-lg shadow-pink-200">
         <CardHeader

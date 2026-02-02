@@ -1,6 +1,7 @@
 "use client";
 
 import { PatientTable } from "@/app/_components/patient/PatientTable";
+import { useNavbarStore } from "@/components/sidebar/store";
 import { useClinicalStore } from "@/lib/stores/clinical";
 import { Patient } from "@/lib/types/patient";
 import { IconButton, Tooltip } from "@mui/material";
@@ -11,11 +12,19 @@ const ClinicalPage = () => {
   const router = useRouter();
 
   const handleAdd = (pid: number) => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "添加临床信息", href: "/clinical/edit" });
+
     useClinicalStore.getState().resetClinical(pid);
     router.push("/clinical/edit");
   };
 
   const handleView = (patient: Patient) => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "临床信息列表", href: "/clinical/view" });
+
     useClinicalStore.getState().setViewedPatient(patient);
     router.push("/clinical/view");
   };

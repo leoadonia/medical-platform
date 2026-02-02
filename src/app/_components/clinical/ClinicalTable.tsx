@@ -59,7 +59,8 @@ export const ClinicalTable = ({
       headerName: "恶化因子",
       render: (row: Clinical) => {
         if (age > 0 && row.cobb.cobb > 0) {
-          return (row.cobb.cobb - 3 * row.risser) / age;
+          const data = (row.cobb.cobb - 3 * row.risser) / age;
+          return data.toFixed(2);
         }
 
         return "";

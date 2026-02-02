@@ -4,6 +4,7 @@ import { Box, CardActionArea, Divider, Stack, Typography } from "@mui/material";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useNavbarStore } from "./store";
 
 export type MenuGroupProps = {
   title: string;
@@ -65,6 +66,8 @@ export const Menu = (props: MenuData) => {
       data-active={path === href || path.startsWith(`${href}/`)}
       className="rounded-lg p-2 hover:bg-pink-100 data-[active=true]:bg-pink-300"
       onClick={() => {
+        useNavbarStore.getState().clear();
+        useNavbarStore.getState().addRouter({ title, href });
         router.push(href);
       }}
     >

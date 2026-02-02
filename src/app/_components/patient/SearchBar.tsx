@@ -1,6 +1,7 @@
 "use client";
 
 import { TextField } from "@/components/input/TextField";
+import { useNavbarStore } from "@/components/sidebar/store";
 import { usePatientStore } from "@/lib/stores/patient";
 import { SearchParams } from "@/lib/types/patient";
 import { Button, Card, CardContent } from "@mui/material";
@@ -39,6 +40,10 @@ const SearchBar = React.memo(
     };
 
     const handleAddPatient = () => {
+      useNavbarStore
+        .getState()
+        .addRouter({ title: "新增患者", href: "/patients/edit" });
+
       usePatientStore.getState().clearPatient();
       router.push("/patients/edit");
     };

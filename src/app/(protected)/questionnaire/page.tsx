@@ -1,6 +1,7 @@
 "use client";
 
 import { PatientTable } from "@/app/_components/patient/PatientTable";
+import { useNavbarStore } from "@/components/sidebar/store";
 import { useQuestionnaireStore } from "@/lib/stores/questionnaire";
 import { Patient } from "@/lib/types/patient";
 import { IconButton, Tooltip } from "@mui/material";
@@ -11,12 +12,20 @@ const QuestionnairePage = () => {
   const router = useRouter();
 
   const handleAdd = (patient: Patient) => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "添加问卷", href: "/questionnaire/add" });
+
     useQuestionnaireStore.getState().clearAnswers();
     useQuestionnaireStore.getState().setViewedPatient(patient);
     router.push("/questionnaire/add");
   };
 
   const handleView = (patient: Patient) => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "查看列表", href: "/questionnaire/view" });
+
     useQuestionnaireStore.getState().setViewedPatient(patient);
     router.push("/questionnaire/view");
   };

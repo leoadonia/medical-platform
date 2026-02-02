@@ -6,6 +6,7 @@ import { Box, Button, Typography } from "@mui/material";
 import {
   BedSingle,
   ChartSpline,
+  Hospital,
   LogIn,
   LogOut,
   Settings,
@@ -30,6 +31,7 @@ const Header = () => {
 const Menus = () => {
   return (
     <Box display={"flex"} flexDirection={"column"} gap={2}>
+      <Menu title="概览" icon={<Hospital className="h-4 w-4" />} href="/" />
       <Menu
         title="患者信息"
         icon={<Users className="h-4 w-4" />}

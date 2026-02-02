@@ -3,11 +3,12 @@
 import { PatientViewCard } from "@/app/_components/patient/PatientViewCard";
 import { QuestionnaireTable } from "@/app/_components/questionnaire/QuestionnaireTable";
 import { GradientCircularProgress } from "@/components/animation/Loading";
+import { useNavbarStore } from "@/components/sidebar/store";
 import { getQuestionnaire } from "@/lib/apis/questionnaire";
 import { useQuestionnaireStore } from "@/lib/stores/questionnaire";
 import { Questionnaire } from "@/lib/types/questionnaire";
 import { Button, IconButton, Tooltip } from "@mui/material";
-import { Eye, Plus, Undo2 } from "lucide-react";
+import { Eye, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -19,18 +20,21 @@ const ViewPage = () => {
     return <GradientCircularProgress />;
   }
 
-  const handleBack = () => {
-    useQuestionnaireStore.getState().clearViewedPatient();
-    router.push("/questionnaire");
-  };
-
   const handleAdd = () => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "新增问卷", href: "/questionnaire/add" });
+
     useQuestionnaireStore.getState().clearAnswers();
     useQuestionnaireStore.getState().setViewedPatient(patient);
     router.push("/questionnaire/add");
   };
 
   const handleViewDetail = async (id: number) => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "问卷详情", href: "/questionnaire/add" });
+
     try {
       const answers = await getQuestionnaire(id);
       if (answers.length === 0) {
@@ -51,14 +55,6 @@ const ViewPage = () => {
         patient={patient}
         actions={
           <div className="flex gap-4">
-            <Button
-              variant="text"
-              className="bg-primary-50 hover:bg-primary-200 gap-2"
-              startIcon={<Undo2 className="h-4 w-4" />}
-              onClick={handleBack}
-            >
-              返回
-            </Button>
             <Button
               variant="outlined"
               className="gap-2"

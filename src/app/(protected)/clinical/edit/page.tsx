@@ -1,6 +1,5 @@
 "use client";
 
-import { BackHeader } from "@/components/BackHeader";
 import { createClinical, updateClinical } from "@/lib/apis/clinical";
 import { useClinicalStore } from "@/lib/stores/clinical";
 import { Button } from "@mui/material";
@@ -18,6 +17,7 @@ import { Posture } from "./_components/Posture";
 import { Risser } from "./_components/Risser";
 import { Tenderness } from "./_components/Tenderness";
 import { Treatment } from "./_components/Treatment";
+import { useNavbarStore } from "@/components/sidebar/store";
 
 const ClinicalEditPage = () => {
   const { clinical } = useClinicalStore();
@@ -32,7 +32,9 @@ const ClinicalEditPage = () => {
       }
 
       toast.success("添加成功.");
-      router.push("/clinical");
+
+      const href = useNavbarStore.getState().back() || "/clinical";
+      router.replace(href);
     } catch (err) {
       toast.error(err as string);
     }
@@ -40,8 +42,6 @@ const ClinicalEditPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BackHeader title={clinical.id === 0 ? "添加临床信息" : "编辑临床信息"} />
-
       <ClinicalCard>
         <Cobb />
         <FlexionAtr />

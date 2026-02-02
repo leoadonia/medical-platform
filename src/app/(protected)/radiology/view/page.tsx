@@ -3,10 +3,11 @@
 import { PatientViewCard } from "@/app/_components/patient/PatientViewCard";
 import { RadiologyTable } from "@/app/_components/radiology/RadiologyTable";
 import { GradientCircularProgress } from "@/components/animation/Loading";
+import { useNavbarStore } from "@/components/sidebar/store";
 import { useRadiologyStore } from "@/lib/stores/radiology";
 import { Radiology } from "@/lib/types/radiology";
 import { Button, IconButton, Tooltip } from "@mui/material";
-import { NotebookPen, Plus, Undo2 } from "lucide-react";
+import { NotebookPen, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const ViewPage = () => {
@@ -17,17 +18,20 @@ const ViewPage = () => {
     return <GradientCircularProgress />;
   }
 
-  const handleBack = () => {
-    useRadiologyStore.getState().clearViewedPatient();
-    router.push("/radiology");
-  };
-
   const handleAdd = () => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "新增影像", href: "/radiology/edit" });
+
     useRadiologyStore.getState().resetRadiology(patient.id);
     router.push("/radiology/edit");
   };
 
   const handleEdit = (radiology: Radiology) => {
+    useNavbarStore
+      .getState()
+      .addRouter({ title: "修改影像", href: "/radiology/edit" });
+
     useRadiologyStore.getState().setRadiology(radiology);
     router.push("/radiology/edit");
   };
@@ -38,14 +42,6 @@ const ViewPage = () => {
         patient={patient}
         actions={
           <div className="flex gap-4">
-            <Button
-              variant="text"
-              className="bg-primary-50 hover:bg-primary-200 gap-2"
-              startIcon={<Undo2 className="h-4 w-4" />}
-              onClick={handleBack}
-            >
-              返回
-            </Button>
             <Button
               variant="outlined"
               className="gap-2"

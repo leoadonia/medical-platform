@@ -1,7 +1,7 @@
 "use client";
 
-import { BackHeader } from "@/components/BackHeader";
 import { ImageUploader } from "@/components/input/ImageUploader";
+import { useNavbarStore } from "@/components/sidebar/store";
 import {
   insertRadiology,
   updateRadiology as updateRadiologyCommand,
@@ -25,7 +25,9 @@ const RadiologyEditPage = () => {
       }
 
       toast.success("上传成功!");
-      router.replace("/radiology");
+
+      const href = useNavbarStore.getState().back() || "/radiology";
+      router.replace(href);
     } catch (err) {
       toast.error(err as string);
     }
@@ -33,7 +35,6 @@ const RadiologyEditPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <BackHeader title={radiology.id === 0 ? "新增" : "编辑"} />
       <Alert
         icon={<Info className="h-4 w-4" />}
         severity="info"

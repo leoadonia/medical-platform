@@ -27,7 +27,7 @@ export default function RootLayout({
                 <AppSidebar />
                 <div className="flex-1 flex-col">
                   <AppNavbar />
-                  <div className="h-[calc(100vh-52px)] overflow-y-auto p-4">
+                  <div className="h-[calc(100vh-52px)] overflow-y-auto p-4 lg:px-8">
                     {children}
                   </div>
                 </div>

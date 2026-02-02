@@ -1,8 +1,8 @@
 "use client";
 
-import { BackHeader } from "@/components/BackHeader";
 import { FormGrid } from "@/components/data/FormGrid";
 import { TextField } from "@/components/input/TextField";
+import { useNavbarStore } from "@/components/sidebar/store";
 import {
   createPatient,
   updatePatient as updatePatientToDB,
@@ -50,7 +50,9 @@ const EditPage = () => {
       }
 
       toast.success("保存成功");
-      router.push("/patients");
+
+      const href = useNavbarStore.getState().back() || "/patients";
+      router.replace(href);
     } catch (err) {
       toast.error(err as string);
     }
@@ -58,8 +60,6 @@ const EditPage = () => {
 
   return (
     <Box display={"flex"} flexDirection={"column"} gap={3}>
-      <BackHeader title={patient.id ? "编辑患者信息" : "新增患者"} />
-
       <Box className="flex flex-col gap-2 px-4">
         <FormGrid id="registration_number" label="登记号">
           <TextField
