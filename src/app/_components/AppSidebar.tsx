@@ -87,7 +87,7 @@ const Exit = () => {
       variant="outlined"
       className="flex w-full gap-2 rounded-full p-2" // gap-2 is used for gap between icon and text.
     >
-      <Typography variant="body2">退出登录</Typography>
+      <Typography variant="body1">退出登录</Typography>
     </Button>
   );
 };

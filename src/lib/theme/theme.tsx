@@ -1,5 +1,6 @@
 "use client";
 
+import inter from "@/lib/font";
 import { createTheme, PaletteOptions } from "@mui/material";
 import { palette as darkPalette } from "./dark";
 import { palette as lightPalette } from "./light";
@@ -12,6 +13,7 @@ const createBaseTheme = (palette: PaletteOptions) =>
     palette,
     typography: {
       fontFamily: [
+        inter.style.fontFamily,
         "-apple-system",
         "BlinkMacSystemFont",
         '"Source Han"',
@@ -78,13 +80,13 @@ const createBaseTheme = (palette: PaletteOptions) =>
         fontSize: "28px",
         letterSpacing: "-0.0075em",
         lineHeight: "36px",
-        fontWeight: 500,
+        fontWeight: 600,
       },
       h1: {
         fontSize: "35px",
         letterSpacing: "-0.01em",
         lineHeight: "40px",
-        fontWeight: 500,
+        fontWeight: 700,
       },
       caption: {
         // Helper text.
@@ -92,7 +94,7 @@ const createBaseTheme = (palette: PaletteOptions) =>
         lineHeight: "14px",
         letterSpacing: "0.0025em",
         fontStyle: "italic",
-        fontWeight: 300,
+        fontWeight: 400,
       },
       overline: {
         fontSize: "12px",
@@ -165,6 +167,7 @@ const createBaseTheme = (palette: PaletteOptions) =>
         styleOverrides: {
           root: {
             fontSize: "12px", // H5
+            fontWeight: 400,
             letterSpacing: 0,
             lineHeight: "18px",
           },

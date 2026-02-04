@@ -61,10 +61,19 @@ export const Menu = (props: MenuData) => {
   const path = usePathname();
   const router = useRouter();
 
+  const classes = {
+    active:
+      "rounded-lg p-2 bg-info-100 border-2 border-white shadow-gray-400 shadow-lg text-info-700",
+    inactive: "rounded-lg p-2 hover:bg-info-50",
+  };
+
   return (
     <CardActionArea
-      data-active={path === href || path.startsWith(`${href}/`)}
-      className="rounded-lg p-2 hover:bg-pink-100 data-[active=true]:bg-pink-300"
+      className={
+        path === href || path.startsWith(`${href}/`)
+          ? classes.active
+          : classes.inactive
+      }
       onClick={() => {
         useNavbarStore.getState().clear();
         useNavbarStore.getState().addRouter({ title, href });
@@ -73,7 +82,7 @@ export const Menu = (props: MenuData) => {
     >
       <Box display={"flex"} alignItems={"center"} gap={2} pl={2}>
         {icon}
-        <Typography variant={"subtitle2"} className="font-semibold">
+        <Typography variant="body2" className="font-semibold">
           {title}
         </Typography>
       </Box>

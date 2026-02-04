@@ -1,12 +1,13 @@
+import inter from "@/lib/font";
 import { lightTheme } from "@/lib/theme/theme";
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { AppNavbar } from "./_components/AppNavbar";
 import { AppSidebar } from "./_components/AppSidebar";
 import "./globals.css";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Medical Platform",
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>
+      <body className={`antialiased ${inter.className}`}>
         <Suspense>
           <AppRouterCacheProvider options={{ enableCssLayer: true }}>
             <ThemeProvider theme={lightTheme}>
