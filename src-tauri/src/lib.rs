@@ -1,4 +1,7 @@
-use std::{path::PathBuf, sync::Mutex};
+use std::{
+    path::PathBuf,
+    sync::{Arc, Mutex},
+};
 
 use anyhow::Result;
 use tauri::{App, Manager};
@@ -6,6 +9,7 @@ use tauri::{App, Manager};
 use crate::{storage::Storage, system::Settings};
 
 mod commands;
+mod media;
 mod schema;
 mod storage;
 mod system;
@@ -31,7 +35,9 @@ pub fn run() {
             settings.load(&app_dir)?;
             storage.init(settings.data_dir.as_ref().unwrap())?;
 
-            let settings = Mutex::new(settings);
+            // As the Settings will be used in multiple threads (e.g., starting http server),
+            // we need to wrap it in an Arc<Mutex<Settings>>.
+            let settings = Arc::new(Mutex::new(settings));
             app.manage(settings);
 
             let storage = Mutex::new(storage);
@@ -55,11 +61,13 @@ pub fn run() {
             commands::radiology::update_radiology,
             commands::radiology::select_radiology_list,
             commands::asset::resolve_asset,
+            commands::asset::read_pdf,
             commands::questionnaire::add_questionnaire,
             commands::questionnaire::get_questionnaire,
             commands::questionnaire::get_questionnaires,
             commands::settings::get_settings,
             commands::settings::update_settings,
+            commands::media::get_video
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

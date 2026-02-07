@@ -1,5 +1,6 @@
 pub mod asset;
 pub mod clinical;
+pub mod media;
 pub mod patient;
 pub mod questionnaire;
 pub mod radiology;

@@ -1,7 +1,7 @@
-# Tauri + React + Typescript
+### issue
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+- 在 linux 上播放视频，需要安装依赖:
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+  ```bash
+  sudo apt-get install gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
+  ```

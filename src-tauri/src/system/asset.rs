@@ -6,3 +6,9 @@ pub fn read_image_data(path: &str) -> Result<String> {
     let asset = general_purpose::STANDARD.encode(&bytes);
     Ok(format!("data:image/*;base64,{}", asset))
 }
+
+pub fn read_pdf(path: &str) -> Result<String> {
+    let bytes = std::fs::read(path)?;
+    let asset = general_purpose::STANDARD.encode(&bytes);
+    Ok(format!("data:application/pdf;base64,{}", asset))
+}
