@@ -3,7 +3,13 @@ import { Backdrop, Tooltip } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 
-export const ImageViewer = ({ src }: { src: string }) => {
+export const ImageViewer = ({
+  src,
+  viewMode = true,
+}: {
+  src: string;
+  viewMode?: boolean;
+}) => {
   const [image, setImage] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState<boolean>(false);
@@ -33,20 +39,22 @@ export const ImageViewer = ({ src }: { src: string }) => {
             <Image src={image} height={100} width={90} alt={src} />
           </div>
         </Tooltip>
-        <Backdrop
-          open={open}
-          onClick={() => setOpen(false)}
-          sx={(theme) => ({ zIndex: theme.zIndex.drawer + 1 })}
-          className="bg-gray-50/60"
-        >
-          <Image
-            src={image}
-            height={1024}
-            width={1024}
-            className="h-125 max-h-[60vh] w-112.5 max-w-[54vw]"
-            alt={src}
-          />
-        </Backdrop>
+        {viewMode && (
+          <Backdrop
+            open={open}
+            onClick={() => setOpen(false)}
+            sx={(theme) => ({ zIndex: theme.zIndex.drawer + 1 })}
+            className="bg-gray-50/60"
+          >
+            <Image
+              src={image}
+              height={1024}
+              width={1024}
+              className="h-125 max-h-[60vh] w-112.5 max-w-[54vw]"
+              alt={src}
+            />
+          </Backdrop>
+        )}
       </div>
     );
   }

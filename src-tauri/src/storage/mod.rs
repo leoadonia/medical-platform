@@ -4,6 +4,7 @@ use anyhow::Result;
 use rusqlite::Connection;
 
 use crate::schema::{
+    article::{Article, ArticleState},
     clinical::Clinical,
     patient::Patient,
     questionnaire::{QuestionAnswer, Questionnaire},
@@ -12,6 +13,7 @@ use crate::schema::{
     PaginationData, PatientSearchRequest,
 };
 
+mod article;
 mod clinical;
 mod patient;
 mod questionnaire;
@@ -47,6 +49,7 @@ impl Storage {
         clinical::create_table(conn)?;
         questionnaire::create_table(conn)?;
         radiology::create_table(conn)?;
+        article::create_table(conn)?;
         Ok(())
     }
 
@@ -160,5 +163,33 @@ impl Storage {
         let conn = self.conn.as_ref().unwrap();
         let data_dir = self.data_dir.as_ref().unwrap();
         radiology::select_list(conn, patient_id, page, limit, data_dir)
+    }
+
+    pub fn insert_article(&self, article: &Article) -> Result<i64> {
+        let conn = self.conn.as_ref().unwrap();
+        let data_dir = self.data_dir.as_ref().unwrap();
+        article::insert(conn, data_dir, article)
+    }
+
+    pub fn update_article(&self, article: &Article) -> Result<()> {
+        let conn = self.conn.as_ref().unwrap();
+        article::update(conn, article)
+    }
+
+    pub fn select_article_list(
+        &self,
+        state: Option<ArticleState>,
+        page: i32,
+        limit: i32,
+    ) -> Result<PaginationData<Article>> {
+        let conn = self.conn.as_ref().unwrap();
+        let data_dir = self.data_dir.as_ref().unwrap();
+        article::get_list(conn, data_dir, state, page, limit)
+    }
+
+    pub fn delete_article(&self, id: i64) -> Result<()> {
+        let conn = self.conn.as_ref().unwrap();
+        let data_dir = self.data_dir.as_ref().unwrap();
+        article::delete(conn, data_dir, id)
     }
 }

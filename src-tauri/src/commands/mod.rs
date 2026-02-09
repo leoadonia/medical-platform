@@ -1,3 +1,4 @@
+pub mod article;
 pub mod asset;
 pub mod clinical;
 pub mod media;

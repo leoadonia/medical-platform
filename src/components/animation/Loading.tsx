@@ -1,7 +1,7 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, CircularProgressProps } from "@mui/material";
 import React from "react";
 
-export const GradientCircularProgress = () => {
+export const GradientCircularProgress = (props: CircularProgressProps) => {
   return (
     <React.Fragment>
       <svg width={0} height={0}>
@@ -13,6 +13,7 @@ export const GradientCircularProgress = () => {
         </defs>
       </svg>
       <CircularProgress
+        {...props}
         sx={{ "svg circle": { stroke: "url(#my_gradient)" } }}
       />
     </React.Fragment>

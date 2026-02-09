@@ -1,10 +1,13 @@
 {
     "cSpell.words": [
         "acromial",
+        "chrono",
         "flatback",
         "partialize",
+        "pdfium",
         "risser",
         "rusqlite",
+        "serde",
         "tauri"
     ]
 }

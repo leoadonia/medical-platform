@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+pub mod article;
 pub mod clinical;
 pub mod patient;
 pub mod questionnaire;

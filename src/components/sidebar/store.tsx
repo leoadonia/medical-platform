@@ -5,6 +5,7 @@ interface SidebarState {
   collapsed: boolean;
 
   toggleCollapsed: () => void;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
 export const useSidebarStore = create<SidebarState>()(
@@ -13,6 +14,8 @@ export const useSidebarStore = create<SidebarState>()(
       collapsed: false,
 
       toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
+
+      setCollapsed: (collapsed: boolean) => set({ collapsed }),
     }),
     {
       name: "sidebar-db",

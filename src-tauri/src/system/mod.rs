@@ -6,6 +6,7 @@ use std::{
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 
+pub mod article;
 pub mod asset;
 
 const SETTINGS_FILE_NAME: &str = "settings.json";

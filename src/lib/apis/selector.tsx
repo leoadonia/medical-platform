@@ -31,6 +31,27 @@ export const singleImageSelector = async (
   return null;
 };
 
+export const articleSelector = async (
+  title?: string,
+): Promise<string | null> => {
+  title = title || "选择科普文件";
+
+  const selected = await open({
+    title,
+    multiple: false,
+    directory: false,
+    canCreateDirectories: false,
+    filters: [
+      {
+        name: "Article File",
+        extensions: ["pdf"],
+      },
+    ],
+  });
+
+  return selected;
+};
+
 export const directorySelector = async (
   title?: string,
 ): Promise<string | null> => {
