@@ -74,13 +74,6 @@ pub fn insert(conn: &Connection, data_dir: &str, article: &Article) -> Result<i6
         println!("Failed to copy pdf, {:?}", err);
         err
     })?;
-    // Copy cover.
-    if let Some(cover) = article.cover.as_deref() {
-        std::fs::copy(cover, dest.join("cover.jpg")).map_err(|err| {
-            println!("Failed to copy cover, {:?}", err);
-            err
-        })?;
-    }
 
     Ok(id)
 }
@@ -132,12 +125,6 @@ pub fn get_list(
     let mut stmt = conn.prepare(&sql)?;
     let rows = stmt.query_map([], |row| {
         let id: i64 = row.get(0)?;
-        let cover = article_media.join(id.to_string()).join("cover.jpg");
-        let cover = if cover.exists() {
-            Some(cover.to_string_lossy().to_string())
-        } else {
-            None
-        };
 
         Ok(Article {
             id,
@@ -151,7 +138,6 @@ pub fn get_list(
                 .join("source.pdf")
                 .to_string_lossy()
                 .to_string(),
-            cover,
         })
     })?;
 

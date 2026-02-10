@@ -37,3 +37,10 @@ pub async fn get_patients(
     let patients = storage.get_patients(&req, page, limit)?;
     Ok(patients)
 }
+
+#[tauri::command]
+pub async fn get_patient(storage: State<'_, Mutex<Storage>>, id: i64) -> Result<Patient> {
+    let storage = storage.lock().unwrap();
+    let patient = storage.get_patient(id)?;
+    Ok(patient)
+}

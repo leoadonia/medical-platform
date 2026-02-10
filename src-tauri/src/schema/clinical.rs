@@ -48,6 +48,7 @@ pub struct Posture {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Cobb {
     pub cobb: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub remark: Option<String>,
 }
 

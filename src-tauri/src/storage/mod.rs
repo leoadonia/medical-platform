@@ -102,6 +102,11 @@ impl Storage {
         patient::get_list(conn, request, page, limit)
     }
 
+    pub fn get_patient(&self, id: i64) -> Result<Patient> {
+        let conn = self.conn.as_ref().unwrap();
+        patient::get_by_id(conn, id)
+    }
+
     pub fn add_questionnaire(&mut self, patient_id: i64, answers: &[QuestionAnswer]) -> Result<()> {
         let mut conn = self.conn.as_mut().unwrap();
         questionnaire::insert_questionnaire(&mut conn, patient_id, answers)?;

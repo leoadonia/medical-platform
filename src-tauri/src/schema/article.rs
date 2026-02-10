@@ -7,7 +7,6 @@ pub struct Article {
 
     pub title: String,
     pub summary: String,
-    pub cover: Option<String>,
     pub origin_file: String,
     pub state: ArticleState,
 

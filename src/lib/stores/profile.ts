@@ -8,6 +8,7 @@ export interface Profile extends User {
 
 export interface ProfileState {
   profile?: Profile;
+  _hasHydrated: boolean;
 
   setProfile: (profile: Profile) => void;
   clearProfile: () => void;
@@ -17,6 +18,7 @@ export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
       profile: undefined,
+      _hasHydrated: false,
 
       setProfile: (profile) => set({ profile }),
 
@@ -26,6 +28,11 @@ export const useProfileStore = create<ProfileState>()(
       name: "sidebar-db",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ profile: state.profile }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state._hasHydrated = true;
+        }
+      },
     },
   ),
 );

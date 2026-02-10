@@ -1,6 +1,7 @@
 "use client";
 
 import { getMediaDir } from "@/lib/apis/media";
+import { prettyPath } from "@/lib/system";
 import { Alert, Button } from "@mui/material";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { Copy, Info } from "lucide-react";
@@ -56,7 +57,7 @@ export const VideoSection = () => {
             点击 <em className="text-pink-400">打开视频目录</em> 按钮,
             将视频拷贝至视频目录下.
           </li>
-          <li>如果无法打开视频目录, 请手动拷贝视频至视频目录下.</li>
+          <li>如果无法打开视频目录, 请拷贝视频路径, 手动打开目录.</li>
           <li>
             视频拷贝完成后, 请点击 <em className="text-pink-400">刷新</em> 按钮,
             会扫描视频目录下的文件. 选择要播放的视频, 点击{" "}
@@ -64,8 +65,9 @@ export const VideoSection = () => {
           </li>
         </div>
       </Alert>
-      <div className="flex items-center gap-2 text-sm font-medium">
-        当前视频目录: <div className="text-info-600">{mediaDir}</div>
+      <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
+        当前视频目录:{" "}
+        <div className="text-info-600">{prettyPath(mediaDir)}</div>
         <Button size="small" color="secondary" onClick={handleOpenMediaDir}>
           打开视频目录
         </Button>

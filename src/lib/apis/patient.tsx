@@ -29,3 +29,11 @@ export const updatePatient = async (patient: Patient): Promise<void> => {
     data: JSON.stringify(patient),
   });
 };
+
+export const getPatient = async (id: number): Promise<Patient> => {
+  const response = await invoke<Patient>("get_patient", {
+    id,
+  });
+
+  return response;
+};

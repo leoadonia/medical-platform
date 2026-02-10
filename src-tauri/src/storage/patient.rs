@@ -1,6 +1,6 @@
 use anyhow::Result;
 use rusqlite::{
-    params_from_iter,
+    params, params_from_iter,
     types::{FromSql, FromSqlError, ValueRef},
     Connection, ToSql,
 };
@@ -209,4 +209,27 @@ pub fn update_state(conn: &Connection, id: i64, clinical: &Clinical) -> Result<(
     )?;
 
     Ok(())
+}
+
+pub fn get_by_id(conn: &Connection, id: i64) -> Result<Patient> {
+    let mut stmt = conn.prepare("SELECT * FROM patient WHERE id = ?1")?;
+    let row = stmt.query_row(params![id], |row| {
+        Ok(Patient {
+            id: row.get(0)?,
+            registration_number: row.get(1)?,
+            name: row.get(2)?,
+            gender: row.get(3)?,
+            menarche: row.get(4)?,
+            birthday: row.get(5)?,
+            school: row.get(6)?,
+            grade: row.get(7)?,
+            weight: row.get(8)?,
+            height: row.get(9)?,
+            contact: row.get(10)?,
+            state: row.get(11)?,
+            created_at: row.get(12)?,
+        })
+    })?;
+
+    Ok(row)
 }

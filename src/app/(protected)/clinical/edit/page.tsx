@@ -29,6 +29,7 @@ const ClinicalEditPage = () => {
         await createClinical(clinical);
       } else {
         await updateClinical(clinical);
+        await useClinicalStore.getState().reloadPatient();
       }
 
       toast.success("添加成功.");

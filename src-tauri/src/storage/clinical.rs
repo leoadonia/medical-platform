@@ -115,6 +115,8 @@ pub fn update(conn: &Connection, clinical: &Clinical) -> Result<()> {
             now,
             clinical.id))?;
 
+    patient::update_state(conn, clinical.patient_id, clinical)?;
+
     Ok(())
 }
 

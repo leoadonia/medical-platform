@@ -56,6 +56,8 @@ pub struct Patient {
     pub registration_number: String,
     pub name: String,
     pub gender: String,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub menarche: Option<i8>,
     pub birthday: i64,
     pub school: String,

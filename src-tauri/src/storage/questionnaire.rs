@@ -38,7 +38,6 @@ pub fn insert_questionnaire(
 ) -> Result<()> {
     let now = chrono::Utc::now().timestamp();
     let score: i64 = answers.iter().map(|a| a.score as i64).sum();
-    println!(">>>> 1, {:?}, score: {}", answers, score);
 
     let tx = conn.transaction()?;
     tx.execute(

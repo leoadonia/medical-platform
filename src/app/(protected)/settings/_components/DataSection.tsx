@@ -1,6 +1,7 @@
 import { TextField } from "@/components/input/TextField";
 import { directorySelector } from "@/lib/apis/selector";
 import { getSettings, updateSettings } from "@/lib/apis/settings";
+import { prettyPath } from "@/lib/system";
 import { Settings } from "@/lib/types/settings";
 import {
   Alert,
@@ -71,7 +72,7 @@ export const DataSection = () => {
             </Tooltip>
           }
           variant="standard"
-          value={settings?.data_dir || ""}
+          value={prettyPath(settings?.data_dir || "")}
         />
         <Alert
           icon={<Info className="h-5 w-5" />}
