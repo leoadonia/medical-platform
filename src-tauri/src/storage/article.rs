@@ -113,10 +113,7 @@ pub fn get_list(
 
     let mut total_sql = "SELECT COUNT(*) FROM article".to_string();
     if let Some(state) = state {
-        total_sql = format!(
-            "SELECT COUNT(*) FROM article where state = {:?}",
-            state.to_sql()
-        );
+        total_sql = format!("SELECT COUNT(*) FROM article where state = {}", state as u8);
     }
 
     println!("total: {}", total_sql);
@@ -125,7 +122,7 @@ pub fn get_list(
 
     let mut sql = "SELECT * from article".to_string();
     if let Some(state) = state {
-        sql.push_str(&format!(" WHERE state = {:?}", state.to_sql()));
+        sql.push_str(&format!(" WHERE state = {}", state as u8));
     }
 
     sql.push_str(&format!(

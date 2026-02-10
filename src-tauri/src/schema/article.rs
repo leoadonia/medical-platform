@@ -18,6 +18,7 @@ pub struct Article {
     pub updated_at: i64,
 }
 
+#[repr(u8)]
 #[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub enum ArticleState {
     Init,
