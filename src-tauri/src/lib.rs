@@ -74,7 +74,6 @@ pub fn run() {
             commands::media::enable_video,
             commands::article::parse_pdf,
             commands::article::save_article,
-            commands::article::article_remove_temp,
             commands::article::get_article_list,
             commands::article::delete_article,
             commands::article::update_article

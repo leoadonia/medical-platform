@@ -116,8 +116,6 @@ pub fn get_list(
         total_sql = format!("SELECT COUNT(*) FROM article where state = {}", state as u8);
     }
 
-    println!("total: {}", total_sql);
-
     let total = conn.query_row(total_sql.as_str(), [], |row| row.get(0))?;
 
     let mut sql = "SELECT * from article".to_string();

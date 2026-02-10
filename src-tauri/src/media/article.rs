@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 pub struct PdfMetadata {
     pub title: Option<String>,
     pub summary: Option<String>,
-    pub covers: Vec<String>,
 }
 
 pub struct StringBuilder {
@@ -63,13 +62,11 @@ impl StringBuilder {
     }
 }
 
-pub fn parse_pdf(pdf: &str) -> Result<PdfMetadata> {
+pub fn parse_pdf(app_dir: &str, pdf: &str) -> Result<PdfMetadata> {
     let pdfium = Pdfium::new(
-        Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(
-            "/home/adonia/02_download/lib",
-        ))
-        .or_else(|_| Pdfium::bind_to_system_library())
-        .map_err(|e| anyhow::anyhow!("Failed to load pdfium library, {:?}", e))?,
+        Pdfium::bind_to_library(Pdfium::pdfium_platform_library_name_at_path(app_dir))
+            .or_else(|_| Pdfium::bind_to_system_library())
+            .map_err(|e| anyhow::anyhow!("Failed to load pdfium library, {:?}", e))?,
     );
     let document = pdfium.load_pdf_from_file(pdf, None)?;
 
@@ -81,43 +78,33 @@ pub fn parse_pdf(pdf: &str) -> Result<PdfMetadata> {
 
     // Extract text, max length is 1000.
     let mut sb = StringBuilder::new(1000);
-    let mut images: Vec<String> = Vec::new();
-    let tmpdir = std::env::temp_dir();
+    let mut found_image = false;
 
     first_page
         .objects()
         .iter()
         .enumerate()
-        .for_each(|(index, object)| {
+        .for_each(|(_, object)| {
             if let Some(text) = object.as_text_object() {
                 sb.push(text.text().as_str());
-            } else if let Some(image) = object.as_image_object() {
-                if images.len() == 0 {
+            } else if let Some(_) = object.as_image_object() {
+                if !found_image {
                     sb.push("<image>");
+                    found_image = true;
                 }
 
-                if let Ok(image) = image.get_raw_image() {
-                    let path = tmpdir.join(format!("img-{}.jpg", index));
-                    let r = image.save(path.to_str().unwrap());
-                    if r.is_ok() {
-                        images.push(path.to_string_lossy().to_string());
-                    }
-                }
+                // if let Ok(image) = image.get_raw_image() {
+                //     let path = tmpdir.join(format!("img-{}.jpg", index));
+                //     let r = image.save(path.to_str().unwrap());
+                //     if r.is_ok() {
+                //         images.push(path.to_string_lossy().to_string());
+                //     }
+                // }
             }
         });
 
     Ok(PdfMetadata {
         title: sb.guess_title(),
         summary: Some(sb.summary().to_string()),
-        covers: images,
     })
-}
-
-pub fn remove_temp(meta: &PdfMetadata) -> Result<()> {
-    let tmpdir = std::env::temp_dir();
-    for cover in meta.covers.iter() {
-        let path = tmpdir.join(cover);
-        std::fs::remove_file(path)?;
-    }
-    Ok(())
 }

@@ -8,6 +8,7 @@
     "build": "tsc && next build",
     "tauri": "tauri",
     "bundle:win": "tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc",
+    "bundle:linux": "tauri build -- --verbose",
     "clean": "rm -rf out .next && cd src-tauri && cargo clean"
   },
   "dependencies": {

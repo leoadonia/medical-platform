@@ -11,6 +11,8 @@ use tower_http::services::ServeDir;
 
 use crate::system::Settings;
 
+pub mod article;
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VideoFiles {
     pub enabled: Option<String>,

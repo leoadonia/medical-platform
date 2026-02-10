@@ -1,13 +1,8 @@
 "use client";
 
 import { GradientCircularProgress } from "@/components/animation/Loading";
-import { ImageViewer } from "@/components/input/ImageViewer";
 import { TextField } from "@/components/input/TextField";
-import {
-  parsePdf,
-  removeArticleTempFiles,
-  saveArticle,
-} from "@/lib/apis/article";
+import { parsePdf, saveArticle } from "@/lib/apis/article";
 import { articleSelector } from "@/lib/apis/selector";
 import { PdfMetadata } from "@/lib/types/media";
 import {
@@ -34,7 +29,6 @@ const ArticleMetadata = ({
 }) => {
   const [isPending, startTransition] = useTransition();
   const [metadata, setMetadata] = useState<PdfMetadata | null>(null);
-  const [selectedCover, setSelectedCover] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [summary, setSummary] = useState<string>("");
 
@@ -56,22 +50,8 @@ const ArticleMetadata = ({
     });
   }, [pdf]);
 
-  const handleCoverSelector = (cover: string) => {
-    setSelectedCover(cover);
-  };
-
   const handleCancel = async () => {
-    if (!metadata) {
-      return;
-    }
-
-    try {
-      await removeArticleTempFiles(metadata);
-    } catch (err) {
-      toast.error(err as string);
-    } finally {
-      onCompleted(false);
-    }
+    onCompleted(false);
   };
 
   const handleSubmit = async () => {
@@ -80,12 +60,11 @@ const ArticleMetadata = ({
     }
 
     try {
-      await saveArticle(metadata, {
+      await saveArticle({
         id: 0,
         title: title,
         summary: summary,
         origin_file: pdf,
-        cover: selectedCover || undefined,
         state: "Init",
         created_at: 0,
         updated_at: 0,
@@ -122,19 +101,6 @@ const ArticleMetadata = ({
               fullWidth
               multiline
             />
-            <div className="flex flex-wrap gap-2">
-              <Typography variant="subtitle1">选择文章封面(可选):</Typography>
-              {metadata.covers.map((cover) => (
-                <div
-                  key={cover}
-                  onClick={() => handleCoverSelector(cover)}
-                  className="data-[active=true]:border-2 data-[active=true]:border-pink-600"
-                  data-active={cover === selectedCover}
-                >
-                  <ImageViewer src={cover} viewMode={false} />
-                </div>
-              ))}
-            </div>
           </>
         )}
       </CardContent>

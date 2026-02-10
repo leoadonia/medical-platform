@@ -1,41 +1,33 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tauri::{Result, State};
 
 use crate::{
+    media::article::PdfMetadata,
     schema::{
         article::{Article, ArticleState},
         PaginationData,
     },
     storage::Storage,
-    system::article::PdfMetadata,
+    system::Settings,
 };
 
 #[tauri::command]
-pub async fn parse_pdf(pdf: &str) -> Result<PdfMetadata> {
-    let metadata = crate::system::article::parse_pdf(pdf)?;
+pub async fn parse_pdf(
+    settings: State<'_, Arc<Mutex<Settings>>>,
+    pdf: &str,
+) -> Result<PdfMetadata> {
+    let settings = settings.lock().unwrap();
+    let app_dir = settings.app_dir.clone().unwrap();
+    let metadata = crate::media::article::parse_pdf(app_dir.as_str(), pdf)?;
     Ok(metadata)
 }
 
 #[tauri::command]
-pub async fn article_remove_temp(data: &str) -> Result<()> {
-    let meta: PdfMetadata = serde_json::from_str(data)?;
-    crate::system::article::remove_temp(&meta)?;
-    Ok(())
-}
-
-#[tauri::command]
-pub async fn save_article(
-    storage: State<'_, Mutex<Storage>>,
-    meta: &str,
-    data: &str,
-) -> Result<()> {
+pub async fn save_article(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
     let storage = storage.lock().unwrap();
     let article: Article = serde_json::from_str(data)?;
     let _ = storage.insert_article(&article)?;
-
-    let meta: PdfMetadata = serde_json::from_str(meta)?;
-    crate::system::article::remove_temp(&meta)?;
 
     Ok(())
 }

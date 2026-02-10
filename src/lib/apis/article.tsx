@@ -7,15 +7,8 @@ export const parsePdf = async (pdf: string): Promise<PdfMetadata> => {
   return meta;
 };
 
-export const removeArticleTempFiles = async (
-  meta: PdfMetadata,
-): Promise<void> => {
-  await invoke("article_remove_temp", { data: JSON.stringify(meta) });
-};
-
-export const saveArticle = async (meta: PdfMetadata, article: Article) => {
+export const saveArticle = async (article: Article) => {
   await invoke("save_article", {
-    meta: JSON.stringify(meta),
     data: JSON.stringify(article),
   });
 };
