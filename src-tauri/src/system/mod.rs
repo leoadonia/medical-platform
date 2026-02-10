@@ -18,6 +18,8 @@ pub struct Settings {
 
     // The data directory for the application, default is `$app_dir`.
     pub data_dir: Option<String>,
+
+    pub video: Option<String>,
 }
 
 impl Settings {
@@ -25,6 +27,7 @@ impl Settings {
         Self {
             app_dir: None,
             data_dir: None,
+            video: None,
         }
     }
 
@@ -45,6 +48,13 @@ impl Settings {
         Ok(())
     }
 
+    fn dump(&self) -> Result<()> {
+        let app_dir = self.app_dir.as_ref().unwrap();
+        let settings_file = Path::new(app_dir).join(SETTINGS_FILE_NAME);
+        std::fs::write(settings_file, serde_json::to_string_pretty(self)?)?;
+        Ok(())
+    }
+
     pub fn update(&mut self, data: &str) -> Result<()> {
         let settings: Settings = serde_json::from_str(data)?;
 
@@ -56,13 +66,14 @@ impl Settings {
             }
 
             *self = settings;
-
-            let app_dir = self.app_dir.as_ref().unwrap();
-            let settings_file = Path::new(app_dir).join(SETTINGS_FILE_NAME);
-            std::fs::write(settings_file, serde_json::to_string_pretty(self)?)?;
-            Ok(())
+            self.dump()
         } else {
             Err(anyhow!("Invalid settings, no data_dir."))
         }
+    }
+
+    pub fn update_video(&mut self, video: &str) -> Result<()> {
+        self.video = Some(video.to_string());
+        self.dump()
     }
 }

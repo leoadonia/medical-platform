@@ -29,6 +29,7 @@ pub fn run() {
     let mut storage = Storage::new();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .setup(move |app| {
             let app_dir = create_app_dir_if_absent(app)?;
@@ -68,6 +69,9 @@ pub fn run() {
             commands::settings::get_settings,
             commands::settings::update_settings,
             commands::media::get_video,
+            commands::media::get_media_dir,
+            commands::media::get_videos,
+            commands::media::enable_video,
             commands::article::parse_pdf,
             commands::article::save_article,
             commands::article::article_remove_temp,

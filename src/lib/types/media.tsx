@@ -16,3 +16,8 @@ export interface Article {
   created_at: number;
   updated_at: number;
 }
+
+export interface VideoFiles {
+  enabled?: string;
+  names: string[];
+}

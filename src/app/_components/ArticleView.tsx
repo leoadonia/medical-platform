@@ -1,6 +1,6 @@
 "use client";
 
-import { Article } from "@/lib/types/article";
+import { Article } from "@/lib/types/media";
 import { Dialog } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useState } from "react";

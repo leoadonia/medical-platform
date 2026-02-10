@@ -9,7 +9,7 @@ import {
   saveArticle,
 } from "@/lib/apis/article";
 import { articleSelector } from "@/lib/apis/selector";
-import { PdfMetadata } from "@/lib/types/article";
+import { PdfMetadata } from "@/lib/types/media";
 import {
   Alert,
   Box,
@@ -35,12 +35,21 @@ const ArticleMetadata = ({
   const [isPending, startTransition] = useTransition();
   const [metadata, setMetadata] = useState<PdfMetadata | null>(null);
   const [selectedCover, setSelectedCover] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [summary, setSummary] = useState<string>("");
 
   useEffect(() => {
     startTransition(async () => {
       try {
         const meta = await parsePdf(pdf);
         setMetadata(meta);
+        if (meta.title) {
+          setTitle(meta.title);
+        }
+
+        if (meta.summary) {
+          setSummary(meta.summary);
+        }
       } catch (err) {
         toast.error(err as string);
       }
@@ -73,8 +82,8 @@ const ArticleMetadata = ({
     try {
       await saveArticle(metadata, {
         id: 0,
-        title: metadata.title!,
-        summary: metadata.summary!,
+        title: title,
+        summary: summary,
         origin_file: pdf,
         cover: selectedCover || undefined,
         state: "Init",
@@ -100,15 +109,21 @@ const ArticleMetadata = ({
         )}
         {metadata && (
           <>
-            <TextField label="标题" value={metadata.title || ""} fullWidth />
+            <TextField
+              label="标题"
+              value={title}
+              onValueChange={setTitle}
+              fullWidth
+            />
             <TextField
               label="摘要"
-              value={metadata.summary || ""}
+              value={summary}
+              onValueChange={setSummary}
               fullWidth
               multiline
             />
             <div className="flex flex-wrap gap-2">
-              <Typography variant="subtitle1">选择文章封面:</Typography>
+              <Typography variant="subtitle1">选择文章封面(可选):</Typography>
               {metadata.covers.map((cover) => (
                 <div
                   key={cover}
@@ -182,10 +197,10 @@ export const ArticleSection = () => {
       </Button>
       <Alert
         color="info"
-        className="items-center rounded-xl text-xs font-medium"
+        className="items-center rounded-xl"
         icon={<Info className="h-4 w-4" />}
       >
-        <div className="text-info-600 flex flex-col gap-2">
+        <div className="text-info-600 flex flex-col gap-2 text-xs font-medium">
           <li>只能上传 PDF 文件, 文件大小小于 20M.</li>
           <li>
             系统会尝试解析出 PDF 中的 标题, 摘要 和 封面信息. 由于 PDF
@@ -194,7 +209,11 @@ export const ArticleSection = () => {
           </li>
           <li>
             在识别过程中会产生临时文件, 如果不需要保存该文章, 请点击{" "}
-            <em>取消</em> 按钮, 以删除临时文件.
+            <em className="text-pink-400">取消</em> 按钮, 以删除临时文件.
+          </li>
+          <li>
+            文章只有在点击 <strong className="text-pink-400">发布</strong> 后,
+            才会在首页展示.
           </li>
         </div>
       </Alert>

@@ -5,7 +5,7 @@ import {
   getArticleList,
   publishArticle,
 } from "@/lib/apis/article";
-import { Article } from "@/lib/types/article";
+import { Article } from "@/lib/types/media";
 import { PaginationData } from "@/lib/types/pagination";
 import { IconButton, Tooltip, Typography } from "@mui/material";
 import { Eye, Send, Trash2 } from "lucide-react";

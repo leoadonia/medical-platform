@@ -28,7 +28,17 @@ export const VideoPlayer = () => {
   }, []);
 
   if (isPending || !video) {
-    return <Skeleton width={"100%"} className="h-[calc(100vw*9/16)]" />;
+    return (
+      <Skeleton
+        sx={{
+          minHeight: 320,
+          maxHeight: 480,
+        }}
+        animation="wave"
+        variant="rounded"
+        className="rounded-lg"
+      />
+    );
   }
 
   return (

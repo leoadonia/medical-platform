@@ -1,12 +1,13 @@
 "use client";
 
 import { getArticleList } from "@/lib/apis/article";
-import { Article } from "@/lib/types/article";
+import { Article } from "@/lib/types/media";
 import { PaginationData } from "@/lib/types/pagination";
 import {
   Card,
   CardContent,
   IconButton,
+  Skeleton,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -92,7 +93,17 @@ export const ArticleList = () => {
   }, [page]);
 
   if (isPending || articles.items.length === 0) {
-    return null;
+    return (
+      <Skeleton
+        sx={{
+          minHeight: 160,
+          maxHeight: 240,
+        }}
+        animation="wave"
+        variant="rounded"
+        className="rounded-lg"
+      />
+    );
   }
 
   const handlePervious = () => {

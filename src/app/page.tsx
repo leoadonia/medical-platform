@@ -1,16 +1,16 @@
 "use client";
 
-import { Box, Divider } from "@mui/material";
+import { Divider } from "@mui/material";
 import { ArticleList } from "./_components/ArticleList";
 import { VideoPlayer } from "./_components/VideoPlayer";
 
 const Home = () => {
   return (
-    <Box display={"flex"} flexDirection={"column"} gap={8}>
+    <div className="flex flex-col gap-4">
       <VideoPlayer />
       <Divider />
       <ArticleList />
-    </Box>
+    </div>
   );
 };
 

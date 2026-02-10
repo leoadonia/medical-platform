@@ -1,4 +1,4 @@
-import { Article, ArticleState, PdfMetadata } from "@/lib/types/article";
+import { Article, ArticleState, PdfMetadata } from "@/lib/types/media";
 import { PaginationData } from "@/lib/types/pagination";
 import { invoke } from "@tauri-apps/api/core";
 

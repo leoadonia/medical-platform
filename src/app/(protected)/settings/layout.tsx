@@ -29,6 +29,10 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     setCollapsed(true);
+
+    return () => {
+      setCollapsed(false);
+    };
   }, [setCollapsed]);
 
   const handleClick = (href: string) => {
