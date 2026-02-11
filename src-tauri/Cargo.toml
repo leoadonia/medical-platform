@@ -28,6 +28,6 @@ tauri-plugin-dialog = "2.6.0"
 base64 = "0.22.1"
 axum = "0.8.8"
 tokio = { version = "1.49.0", features = ["full"] }
-tower-http = { version = "0.6.8", features = ["fs"] }
+tower-http = { version = "0.6.8", features = ["fs", "cors"] }
 pdfium-render = { version = "0.8.37" }
 tauri-plugin-opener = "2"

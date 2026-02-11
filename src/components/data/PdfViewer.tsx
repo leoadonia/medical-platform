@@ -1,11 +1,8 @@
 "use client";
 
-import { GradientCircularProgress } from "@/components/animation/Loading";
 import { Button, IconButton, Tooltip } from "@mui/material";
-import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, ArrowRight, ChevronsLeft, CircleX } from "lucide-react";
-import React, { useEffect, useState, useTransition } from "react";
-import toast from "react-hot-toast";
+import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 // import "react-pdf/dist/Page/AnnotationLayer.css";
 // import "react-pdf/dist/Page/TextLayer.css";
@@ -17,24 +14,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const PdfViewer = React.memo(
   ({ src, onClose = () => {} }: { src: string; onClose?: () => void }) => {
-    const [content, setContent] = useState<string | null>(null);
     const [pages, setPages] = useState<number>(0);
     const [page, setPage] = useState<number>(1);
-    const [isPending, startTransition] = useTransition();
-
-    useEffect(() => {
-      startTransition(async () => {
-        try {
-          const content = await invoke<string>("read_pdf", {
-            path: src,
-          });
-          setContent(content);
-        } catch (err) {
-          toast.error(err as string);
-          onClose();
-        }
-      });
-    }, [src, onClose]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
       setPages(numPages);
@@ -48,20 +29,11 @@ const PdfViewer = React.memo(
       });
     }
 
-    if (isPending || !content) {
-      return (
-        <div className="flex min-h-screen items-center gap-4 font-medium">
-          <GradientCircularProgress size={24} />
-          正在加载文件...
-        </div>
-      );
-    }
-
     return (
       <div className="mx-auto max-w-4xl px-4 py-6">
         <div className="mb-6 overflow-hidden rounded-lg shadow-xl">
           <Document
-            file={content}
+            file={src}
             onLoadSuccess={onDocumentLoadSuccess}
             loading=""
             error={<div className="p-8 text-center text-red-500">加载失败</div>}

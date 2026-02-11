@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tauri::{Result, State};
 
@@ -11,7 +11,7 @@ use crate::{
 };
 
 #[tauri::command]
-pub async fn get_user_session(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<User> {
+pub async fn get_user_session(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<User> {
     let storage = storage.lock().unwrap();
     let request: UserSessionRequest = serde_json::from_str(data)?;
     let user = storage
@@ -27,7 +27,7 @@ pub async fn get_user_session(storage: State<'_, Mutex<Storage>>, data: &str) ->
 
 #[tauri::command]
 pub async fn get_users(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     page: i32,
     limit: i32,
 ) -> Result<PaginationData<User>> {
@@ -38,7 +38,7 @@ pub async fn get_users(
 
 #[tauri::command]
 pub async fn modify_password(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     id: i64,
     password: &str,
 ) -> Result<()> {
@@ -48,7 +48,7 @@ pub async fn modify_password(
 }
 
 #[tauri::command]
-pub async fn add_user(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
+pub async fn add_user(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<()> {
     let storage = storage.lock().unwrap();
     let user: User = serde_json::from_str(data)?;
     storage.add_user(&user.name, &user.password)?;
@@ -56,7 +56,7 @@ pub async fn add_user(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<
 }
 
 #[tauri::command]
-pub async fn delete_user(storage: State<'_, Mutex<Storage>>, id: i64) -> Result<()> {
+pub async fn delete_user(storage: State<'_, Arc<Mutex<Storage>>>, id: i64) -> Result<()> {
     let storage = storage.lock().unwrap();
     storage.delete_user(id)?;
     Ok(())

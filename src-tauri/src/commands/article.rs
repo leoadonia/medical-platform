@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 use tauri::{Result, State};
 
 use crate::{
-    media::article::PdfMetadata,
+    media::{article::PdfMetadata, start_media_server_once},
     schema::{
         article::{Article, ArticleState},
         PaginationData,
@@ -24,7 +24,7 @@ pub async fn parse_pdf(
 }
 
 #[tauri::command]
-pub async fn save_article(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
+pub async fn save_article(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<()> {
     let storage = storage.lock().unwrap();
     let article: Article = serde_json::from_str(data)?;
     let _ = storage.insert_article(&article)?;
@@ -34,25 +34,32 @@ pub async fn save_article(storage: State<'_, Mutex<Storage>>, data: &str) -> Res
 
 #[tauri::command]
 pub async fn get_article_list(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     state: Option<ArticleState>,
     page: i32,
     limit: i32,
 ) -> Result<PaginationData<Article>> {
-    let storage = storage.lock().unwrap();
-    let articles = storage.select_article_list(state, page, limit)?;
+    let storage = storage.clone();
+
+    let data_dir = storage.lock().unwrap().data_dir.clone().unwrap();
+    let port = start_media_server_once(&data_dir).await?;
+
+    let articles = storage
+        .lock()
+        .unwrap()
+        .select_article_list(state, page, limit, port)?;
     Ok(articles)
 }
 
 #[tauri::command]
-pub async fn delete_article(storage: State<'_, Mutex<Storage>>, id: i64) -> Result<()> {
+pub async fn delete_article(storage: State<'_, Arc<Mutex<Storage>>>, id: i64) -> Result<()> {
     let storage = storage.lock().unwrap();
     storage.delete_article(id)?;
     Ok(())
 }
 
 #[tauri::command]
-pub async fn update_article(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
+pub async fn update_article(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<()> {
     let storage = storage.lock().unwrap();
     let article: Article = serde_json::from_str(data)?;
     storage.update_article(&article)?;

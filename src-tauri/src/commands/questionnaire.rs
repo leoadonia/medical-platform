@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tauri::{Result, State};
 
@@ -12,7 +12,7 @@ use crate::{
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn add_questionnaire(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     patient_id: i64,
     answers: &str,
 ) -> Result<()> {
@@ -24,7 +24,7 @@ pub async fn add_questionnaire(
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn get_questionnaire(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     id: i64,
 ) -> Result<Vec<QuestionAnswer>> {
     let storage = storage.lock().unwrap();
@@ -34,7 +34,7 @@ pub async fn get_questionnaire(
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn get_questionnaires(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     patient_id: i64,
     page: i32,
     limit: i32,

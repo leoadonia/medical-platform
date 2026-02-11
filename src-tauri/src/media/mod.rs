@@ -7,11 +7,15 @@ use std::{
 use anyhow::{Ok, Result};
 use axum::Router;
 use serde::{Deserialize, Serialize};
-use tower_http::services::ServeDir;
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 
-use crate::system::Settings;
+use crate::{media::bucket::Bucket, system::Settings};
 
 pub mod article;
+pub mod bucket;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VideoFiles {
@@ -23,16 +27,49 @@ pub struct MediaServerState {
     pub listening_port: u16,
 }
 
-pub static MEDIA_SERVER_STATE: OnceLock<Mutex<Option<Arc<MediaServerState>>>> = OnceLock::new();
+static MEDIA_SERVER_STATE: OnceLock<Mutex<Option<Arc<MediaServerState>>>> = OnceLock::new();
 
-pub async fn start_media_server(data_dir: &str) -> Result<u16> {
-    let media_dir = PathBuf::from(data_dir).join("media");
-    if !media_dir.exists() {
-        std::fs::create_dir_all(&media_dir)?;
+pub async fn start_media_server_once(data_dir: &str) -> Result<u16> {
+    let state_once = MEDIA_SERVER_STATE.get_or_init(|| Mutex::new(None));
+
+    {
+        let state_guard = state_once.lock().unwrap();
+        if let Some(ref state) = *state_guard {
+            return Ok(state.listening_port);
+        }
     }
 
-    let serve_dir = ServeDir::new(media_dir).append_index_html_on_directories(false);
-    let app = Router::new().nest_service("/media", serve_dir);
+    let port = start_media_server(&data_dir).await?;
+    let mut state_guard = state_once.lock().unwrap();
+    *state_guard = Some(Arc::new(MediaServerState {
+        listening_port: port,
+    }));
+
+    Ok(port)
+}
+
+pub async fn start_media_server(data_dir: &str) -> Result<u16> {
+    let bucket = Bucket::new(data_dir);
+    let media_dir = bucket.create_media_bucket()?;
+    let media_serve_dir = ServeDir::new(media_dir).append_index_html_on_directories(false);
+
+    let article_dir = bucket.create_article_bucket()?;
+    let article_serve_dir = ServeDir::new(article_dir).append_index_html_on_directories(false);
+
+    let radiology_dir = bucket.create_radiology_bucket()?;
+    let radiology_serve_dir = ServeDir::new(radiology_dir).append_index_html_on_directories(false);
+
+    // Allow react side fetch pdf files.
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
+
+    let app = Router::new()
+        .nest_service("/media", media_serve_dir)
+        .nest_service("/article", article_serve_dir)
+        .nest_service("/radiology", radiology_serve_dir)
+        .layer(cors);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 0));
     let listener = tokio::net::TcpListener::bind(addr).await?;

@@ -6,9 +6,12 @@ use rusqlite::{
     Connection, ToSql,
 };
 
-use crate::schema::{
-    article::{Article, ArticleState},
-    PaginationData,
+use crate::{
+    media::bucket::Bucket,
+    schema::{
+        article::{Article, ArticleState},
+        PaginationData,
+    },
 };
 
 impl ToSql for ArticleState {
@@ -60,13 +63,11 @@ pub fn insert(conn: &Connection, data_dir: &str, article: &Article) -> Result<i6
     let id = conn.last_insert_rowid();
 
     // Copy assets.
-    let dest = Path::new(data_dir)
-        .join("media")
-        .join("article")
-        .join(id.to_string());
-    if !dest.exists() {
-        std::fs::create_dir_all(&dest)?;
-    }
+    let bucket = Bucket::new(data_dir);
+    let article_bucket = bucket.create_article_bucket()?;
+
+    let dest = article_bucket.join(id.to_string());
+    std::fs::create_dir_all(&dest)?;
 
     println!("Saved article: {:?}", article);
 
@@ -95,15 +96,17 @@ pub fn update(conn: &Connection, article: &Article) -> Result<()> {
     Ok(())
 }
 
+fn build_article_uri(http_port: u16, id: i64) -> String {
+    format!("http://localhost:{}/article/{}/source.pdf", http_port, id)
+}
+
 pub fn get_list(
     conn: &Connection,
-    data: &str,
     state: Option<ArticleState>,
     page: i32,
     limit: i32,
+    http_port: u16,
 ) -> Result<PaginationData<Article>> {
-    let article_media = Path::new(data).join("media").join("article");
-
     let mut total_sql = "SELECT COUNT(*) FROM article".to_string();
     if let Some(state) = state {
         total_sql = format!("SELECT COUNT(*) FROM article where state = {}", state as u8);
@@ -133,11 +136,7 @@ pub fn get_list(
             state: row.get(3)?,
             created_at: row.get(4)?,
             updated_at: row.get(5)?,
-            origin_file: article_media
-                .join(id.to_string())
-                .join("source.pdf")
-                .to_string_lossy()
-                .to_string(),
+            origin_file: build_article_uri(http_port, id),
         })
     })?;
 

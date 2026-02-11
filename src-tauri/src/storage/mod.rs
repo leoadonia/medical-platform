@@ -21,8 +21,8 @@ mod radiology;
 mod user;
 
 pub struct Storage {
+    pub data_dir: Option<String>,
     conn: Option<Connection>,
-    data_dir: Option<String>,
 }
 
 impl Storage {
@@ -164,10 +164,11 @@ impl Storage {
         patient_id: i64,
         page: i32,
         limit: i32,
+        http_port: u16,
     ) -> Result<PaginationData<Radiology>> {
         let conn = self.conn.as_ref().unwrap();
         let data_dir = self.data_dir.as_ref().unwrap();
-        radiology::select_list(conn, patient_id, page, limit, data_dir)
+        radiology::select_list(conn, patient_id, page, limit, data_dir, http_port)
     }
 
     pub fn insert_article(&self, article: &Article) -> Result<i64> {
@@ -186,10 +187,10 @@ impl Storage {
         state: Option<ArticleState>,
         page: i32,
         limit: i32,
+        http_port: u16,
     ) -> Result<PaginationData<Article>> {
         let conn = self.conn.as_ref().unwrap();
-        let data_dir = self.data_dir.as_ref().unwrap();
-        article::get_list(conn, data_dir, state, page, limit)
+        article::get_list(conn, state, page, limit, http_port)
     }
 
     pub fn delete_article(&self, id: i64) -> Result<()> {

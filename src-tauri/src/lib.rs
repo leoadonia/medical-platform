@@ -41,7 +41,7 @@ pub fn run() {
             let settings = Arc::new(Mutex::new(settings));
             app.manage(settings);
 
-            let storage = Mutex::new(storage);
+            let storage = Arc::new(Mutex::new(storage));
             app.manage(storage);
 
             Ok(())

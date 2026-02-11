@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageAsset, readImageAsset } from "@/lib/apis/assert";
+import { readImageAsset } from "@/lib/apis/assert";
 import { singleImageSelector } from "@/lib/apis/selector";
 import {
   Box,
@@ -22,21 +22,27 @@ export const ImageUploader = (props: {
   onImageSelected: (src: string) => void;
 }) => {
   const { title, example, src, onImageSelected } = props;
-  const [image, setImage] = useState<ImageAsset | null>(null);
+  const [image, setImage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     startTransition(async () => {
+      if (src.startsWith("http://")) {
+        setImage(src);
+        return;
+      }
+
       const image = await readImageAsset(src);
-      setImage(image);
+      if (image) {
+        setImage(image.asset);
+      }
     });
   }, [src]);
 
   const openImageSelector = async () => {
     const selected = await singleImageSelector(`请选择 ${title} 图片.`);
-    console.log("selected image: ", selected);
-    setImage(selected);
     if (selected) {
+      setImage(selected.asset);
       onImageSelected(selected.path);
     }
   };
@@ -64,12 +70,7 @@ export const ImageUploader = (props: {
               />
               <CardActionArea onClick={openImageSelector}>
                 {image ? (
-                  <Image
-                    src={image.asset}
-                    height={200}
-                    width={180}
-                    alt={title}
-                  />
+                  <Image src={image} height={200} width={180} alt={title} />
                 ) : (
                   <div className="flex h-50 w-45 items-center justify-center rounded-md border border-white shadow-lg">
                     <ImageUp color="gray" className="h-12 w-12" />

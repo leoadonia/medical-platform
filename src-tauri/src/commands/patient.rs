@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tauri::{Result, State};
 
@@ -8,7 +8,7 @@ use crate::{
 };
 
 #[tauri::command]
-pub async fn create_patient(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<i64> {
+pub async fn create_patient(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<i64> {
     println!("create_patient: {:?}", data);
 
     let storage = storage.lock().unwrap();
@@ -18,7 +18,7 @@ pub async fn create_patient(storage: State<'_, Mutex<Storage>>, data: &str) -> R
 }
 
 #[tauri::command]
-pub async fn update_patient(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
+pub async fn update_patient(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<()> {
     let storage = storage.lock().unwrap();
     let patient: Patient = serde_json::from_str(data)?;
     storage.update_patient(&patient)?;
@@ -27,7 +27,7 @@ pub async fn update_patient(storage: State<'_, Mutex<Storage>>, data: &str) -> R
 
 #[tauri::command]
 pub async fn get_patients(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     data: &str,
     page: i32,
     limit: i32,
@@ -39,7 +39,7 @@ pub async fn get_patients(
 }
 
 #[tauri::command]
-pub async fn get_patient(storage: State<'_, Mutex<Storage>>, id: i64) -> Result<Patient> {
+pub async fn get_patient(storage: State<'_, Arc<Mutex<Storage>>>, id: i64) -> Result<Patient> {
     let storage = storage.lock().unwrap();
     let patient = storage.get_patient(id)?;
     Ok(patient)

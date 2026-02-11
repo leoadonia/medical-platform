@@ -6,10 +6,7 @@ use std::{
 use tauri::{Result, State};
 
 use crate::{
-    media::{
-        enable_video_file, get_video_files, start_media_server, MediaServerState, VideoFiles,
-        MEDIA_SERVER_STATE,
-    },
+    media::{enable_video_file, get_video_files, start_media_server_once, VideoFiles},
     system::Settings,
 };
 
@@ -27,24 +24,7 @@ pub async fn get_video(settings: State<'_, Arc<Mutex<Settings>>>) -> Result<Stri
         return Ok("".to_string());
     }
 
-    let state_once = MEDIA_SERVER_STATE.get_or_init(|| Mutex::new(None));
-
-    {
-        let state_guard = state_once.lock().unwrap();
-        if let Some(ref state) = *state_guard {
-            return Ok(get_video_url(
-                state.listening_port,
-                video.as_deref().unwrap(),
-            ));
-        }
-    }
-
-    let port = start_media_server(&data_dir).await?;
-    let mut state_guard = state_once.lock().unwrap();
-    *state_guard = Some(Arc::new(MediaServerState {
-        listening_port: port,
-    }));
-
+    let port = start_media_server_once(&data_dir).await?;
     Ok(get_video_url(port, video.as_deref().unwrap()))
 }
 

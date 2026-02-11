@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tauri::{Result, State};
 
@@ -9,7 +9,7 @@ use crate::{
 
 #[tauri::command(rename_all = "snake_case")]
 pub async fn get_clinical_list(
-    storage: State<'_, Mutex<Storage>>,
+    storage: State<'_, Arc<Mutex<Storage>>>,
     patient_id: i64,
     page: i32,
     limit: i32,
@@ -20,7 +20,7 @@ pub async fn get_clinical_list(
 }
 
 #[tauri::command]
-pub async fn insert_clinical(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<i64> {
+pub async fn insert_clinical(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<i64> {
     let storage = storage.lock().unwrap();
     let clinical: Clinical = serde_json::from_str(data)?;
     let id = storage.insert_clinical(&clinical)?;
@@ -28,7 +28,7 @@ pub async fn insert_clinical(storage: State<'_, Mutex<Storage>>, data: &str) -> 
 }
 
 #[tauri::command]
-pub async fn update_clinical(storage: State<'_, Mutex<Storage>>, data: &str) -> Result<()> {
+pub async fn update_clinical(storage: State<'_, Arc<Mutex<Storage>>>, data: &str) -> Result<()> {
     let storage = storage.lock().unwrap();
     let clinical: Clinical = serde_json::from_str(data)?;
     storage.update_clinical(&clinical)?;

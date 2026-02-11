@@ -88,6 +88,7 @@ export const ArticleList = () => {
   useEffect(() => {
     startTransition(async () => {
       const items = await getArticleList("Published", page, limit);
+      console.log(items);
       setArticles(items);
     });
   }, [page]);
